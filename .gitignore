@@ -1,0 +1,20 @@
+# Large local data and generated outputs
+data_manifests/*.parquet
+sequence_index/
+annotation_index/
+sampling_index/
+stage_inputs/
+training_server_transfer/
+logs/
+checkpoints/
+results/
+
+# Python/cache
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Environment/local
+.env
+.DS_Store
+
