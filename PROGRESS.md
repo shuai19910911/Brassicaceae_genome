@@ -19,3 +19,9 @@
 - 已提交 GFF/GTF 结构注释解析 array job：`8469414`，分区 `q08`，array `0-2`，每个 shard 申请 30 CPU 和 150 GB 内存，输出到 `annotation_index/features.shard*.tsv` 与 `annotation_index/introns.shard*.tsv`。
 - 已提交 FASTA 流式 QC array job：`8469415`，分区 `q07`，array `0-2`，每个 shard 申请 30 CPU 和 150 GB 内存，输出到 `sequence_index/contigs.shard*.tsv`、`sequence_index/assembly_qc.shard*.tsv` 与 `sequence_index/fasta_checksums.shard*.tsv`。
 - 当前 SLURM 状态：两个 array job 均已进入队列，状态为 `PD (Resources)`，等待计算节点资源。
+
+## 2026-06-09 09:36:33 CST
+
+- 发现原 FASTA QC shard `8469415_0` 在 `mamba run` 启动阶段失败，错误为 libmamba JSON parse error，未进入 FASTA 数据处理主体，也未产生 shard 0 结果表。
+- 已仅补交失败 shard：`8469433_0`，分区 `q07`，申请 30 CPU 和 150 GB 内存。当前 `8469433_0` 已在 `cu16` 运行。
+- 当前运行状态：FASTA QC shard `8469415_1`、`8469415_2`、`8469433_0` 均在运行；annotation parse shard `8469414_0`、`8469414_1` 在运行，`8469414_2` 等待资源。
