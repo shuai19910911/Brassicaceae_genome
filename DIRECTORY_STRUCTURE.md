@@ -1,0 +1,94 @@
+# BrassicaceaeGenomeFM 目录结构与文件说明
+
+更新时间：2026-06-09 13:29:03 CST
+
+本仓库只上传轻量说明、脚本、配置和小型 manifest。大体积训练数据保存在本地，并通过 `training_server_transfer/stage_b_bundle/` 统一搬运到训练服务器。
+
+## GitHub 中的目录
+
+### `data_manifests/`
+
+- `brassicaceae_assemblies.tsv`：从 `/home/user/zhangzhishuai/data/plantDB/genome` 扫描得到的 220 个十字花科 assembly 总清单，包含 genome/annotation 路径、体积、是否有 genome、是否有 GFF/GTF、是否进入候选训练集。
+- `brassicaceae_splits.tsv`：通过 FASTA QC 后进入正式 Stage B 的 66 个 assembly split。字段包含 assembly、species、genus、train/validation/test、pass contigs、pass bp。
+- `region_candidates_4k_summary.tsv`：4K 候选窗口总数、split 分布、region 分布。
+- `region_candidates_4k_by_assembly.tsv`：4K 候选窗口按 assembly/split/region 汇总。
+- `region_candidates_8k_summary.tsv`：8K 候选窗口总数、split 分布、region 分布。
+- `region_candidates_8k_by_assembly.tsv`：8K 候选窗口按 assembly/split/region 汇总。
+- `region_candidates_16k_summary.tsv`：16K 候选窗口总数、split 分布、region 分布。
+- `region_candidates_16k_by_assembly.tsv`：16K 候选窗口按 assembly/split/region 汇总。
+- `stage_b_sampling_plan.tsv`：Stage B 正式训练采样计划，目标 20B train tokens，包含每个 region 的可用窗口数、目标窗口数、目标 token 数和采样比例。
+
+### `configs/`
+
+- `stage_b_data.yaml`：训练服务器读取数据的主配置。指向 bundle 内 manifest、FASTA QC、annotation QC、4K/8K/16K candidate shard 和动态 masking/RC 设置。
+
+### `scripts/`
+
+- `build_manifest.py`：扫描原始 genome 目录，生成 assembly 总清单。
+- `fasta_qc.py`：流式读取 `.fna.gz`，生成 contig-level QC、assembly QC 和 checksum shard。
+- `parse_annotations.py`：解析 GFF/GTF，生成 feature shard 和 intron shard。
+- `merge_qc_shards.py`：合并 FASTA QC 的小型 shard。
+- `recompute_fasta_qc.py`：从已合并 contig 表重算 FASTA pass/fail，不重扫 FASTA。
+- `build_splits.py`：基于 manifest 和 assembly QC 生成 deterministic assembly-level split。
+- `summarize_annotation_qc.py`：流式扫描 annotation shard，生成 feature summary 和 coordinate QC。
+- `build_region_candidates.py`：按 4K/8K/16K context 生成 region-aware candidate window shard。
+- `summarize_region_candidates.py`：统计 candidate shard 的 split/region/assembly 分布。
+- `build_stage_b_sampling_plan.py`：根据 candidate summary 生成 Stage B 20B token 采样计划。
+- `create_stage_b_transfer_bundle.py`：生成训练服务器搬运用单目录 bundle。
+
+### `slurm/`
+
+- `run_fasta_qc_shard.sh`：q07 FASTA QC array 脚本。
+- `run_annotation_parse_shard.sh`：q08 annotation parse array 脚本。
+- `run_annotation_qc_summary.sh`：annotation 坐标 QC 汇总脚本。
+- `run_region_candidates_4k.sh`：生成 4K candidate window shard。
+- `run_region_candidates_8k.sh`：生成 8K candidate window shard。
+- `run_region_candidates_16k.sh`：生成 16K candidate window shard。
+
+### 项目根目录文档
+
+- `README.md`：项目入口说明。
+- `PROJECT_PLAN.md`：完整训练计划。
+- `MODEL_STRUCTURE.md`：模型结构解析。
+- `PROGRESS.md`：唯一主要进展文件，每条含具体更新时间。
+- `TRANSFER_MANIFEST.md`：训练服务器搬运说明，生成 bundle 后同步更新。
+
+## 本地大数据目录
+
+这些目录默认不上传 GitHub。
+
+### `sequence_index/`
+
+- `contigs.tsv`：202,346 条 contig 级 QC 记录，包含长度、GC、N fraction、max N run、pass_qc。
+- `assembly_qc.tsv`：67 个结构注释可用 assembly 的 FASTA QC 汇总；66 个通过，1 个因高 N fraction 排除。
+- `fasta_checksums.tsv`：67 个 genome FASTA 的 SHA256。
+- `*.shard*.tsv`：上述表的中间 shard，可保留用于审计，训练搬运不必须。
+
+### `annotation_index/`
+
+- `features.shard00.tsv`、`features.shard01.tsv`、`features.shard02.tsv`：GFF/GTF 解析得到的 gene/mRNA/exon/CDS/UTR feature shard。
+- `introns.shard00.tsv`、`introns.shard01.tsv`、`introns.shard02.tsv`：由 exon chain 推断的 intron shard。
+- `annotation_feature_summary.tsv`：各 assembly 各 feature 类型数量汇总。
+- `annotation_coordinate_qc.tsv`：坐标合法性 QC；53,274,482 行中 23 行异常。
+
+Stage B 训练只需要 `annotation_feature_summary.tsv` 和 `annotation_coordinate_qc.tsv` 做审计；完整 feature/intron shard 只有在训练服务器上重建候选窗口或扩展 C1/C2/D 时才需要搬。
+
+### `sampling_index/`
+
+- `region_candidates_4k.shard00.tsv`、`shard01.tsv`、`shard02.tsv`：4K Stage B 候选窗口坐标。
+- `region_candidates_8k.shard00.tsv`、`shard01.tsv`、`shard02.tsv`：8K Stage B 候选窗口坐标。
+- `region_candidates_16k.shard00.tsv`、`shard01.tsv`、`shard02.tsv`：16K Stage B 候选窗口坐标。
+
+这些 candidate 文件是训练端读取 FASTA 的坐标索引，不是已经展开的 `input_ids`。训练端必须能读取 bundle 内 `raw_genomes/`。
+
+### `training_server_transfer/stage_b_bundle/`
+
+这是最终搬运目录。训练服务器不能访问原始 genome 目录时，只搬运这个目录即可。
+
+当前 bundle 验收结果：
+
+- 总大小：约 21G。
+- `raw_genomes_manifest.tsv`：67 行，含表头，对应 66 个 raw genome FASTA。
+- `TRANSFER_FILES.tsv`：104 行，含表头，对应 103 个 bundle 文件。
+- `sampling_index/`：4K、8K、16K 各 3 个 candidate shard。
+- `data_manifests/stage_b_sampling_plan.tsv`：34 行，含表头，覆盖 4K/8K/16K 的 train、validation、test 采样计划。

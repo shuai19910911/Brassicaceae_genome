@@ -14,6 +14,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--candidate-glob", default="sampling_index/region_candidates_8k.shard*.tsv")
     parser.add_argument("--out-dir", default="data_manifests")
+    parser.add_argument("--label", default="8k")
     return parser.parse_args()
 
 
@@ -35,7 +36,7 @@ def main() -> None:
 
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
-    summary_path = out_dir / "region_candidates_8k_summary.tsv"
+    summary_path = out_dir / f"region_candidates_{args.label}_summary.tsv"
     with summary_path.open("w", newline="") as handle:
         writer = csv.writer(handle, delimiter="\t")
         writer.writerow(["metric", "name", "count", "fraction"])
@@ -45,7 +46,7 @@ def main() -> None:
             writer.writerow(["region", name, count, f"{count / total:.8f}"])
         writer.writerow(["total", "all", total, "1.00000000"])
 
-    assembly_path = out_dir / "region_candidates_8k_by_assembly.tsv"
+    assembly_path = out_dir / f"region_candidates_{args.label}_by_assembly.tsv"
     with assembly_path.open("w", newline="") as handle:
         writer = csv.writer(handle, delimiter="\t")
         writer.writerow(["assembly_id", "split", "region", "count"])
@@ -59,4 +60,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

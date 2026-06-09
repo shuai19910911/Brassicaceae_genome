@@ -144,7 +144,8 @@ def main() -> None:
 
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
-    out_path = out_dir / f"region_candidates_8k.shard{args.shard_index:02d}.tsv"
+    context_label = f"{args.context_len // 1024}k" if args.context_len % 1024 == 0 else str(args.context_len)
+    out_path = out_dir / f"region_candidates_{context_label}.shard{args.shard_index:02d}.tsv"
     fields = [
         "assembly_id",
         "seq_id",

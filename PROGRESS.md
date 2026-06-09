@@ -43,3 +43,12 @@
 - Region candidate 总量为 30,757,136 个 8K 窗口；split 分布为 train 23,995,104、validation 4,311,272、test 2,450,760；region 分布以 CDS 15,090,276、intron 8,465,378、exon 3,731,972 为主，background 417,004。
 - 已生成 Stage B 正式采样计划 `data_manifests/stage_b_sampling_plan.tsv`：目标 train tokens 20B，对应 2,441,406 个 8K 窗口；validation/test 各抽 50,000 个 8K 窗口用于阶段性评估。
 - 已新增 Stage B 数据配置 `configs/stage_b_data.yaml`，训练端应按 sharded candidate + dynamic masking + dynamic reverse-complement 读取，不合并大 candidate 表，也不提前固化 mask。
+
+## 2026-06-09 13:29:03 CST
+
+- 已按正式 Stage B 多上下文口径补齐 4K、8K、16K region-aware candidate window。4K/16K 初始失败或排队分片已转投 `cu` 分区，补跑 job `8469834`、`8469835`、`8469836` 均成功完成。
+- 当前 `sampling_index/` 共 9 个 candidate shard：4K、8K、16K 各 3 个。窗口总量为 92,400,506 个候选窗口（不含各 shard 表头）；其中 4K 31,233,223 个、8K 30,757,136 个、16K 30,410,147 个。
+- 已重新生成 `data_manifests/stage_b_sampling_plan.tsv`，正式 Stage B 训练目标为 20B train tokens，采用 4K/8K/16K 混合上下文；validation/test 在每个 context 各保留 50,000 个窗口用于阶段性评估。
+- 已创建训练服务器单目录搬运包：`training_server_transfer/stage_b_bundle/`。该目录当前约 21G，包含 66 个通过 QC 并进入 split 的 raw genome FASTA、9 个 sampling candidate shard、FASTA QC、annotation summary/QC、训练配置、数据 manifest、处理脚本和文件清单。
+- 训练服务器不能访问 `/home/user/zhangzhishuai/data/plantDB/genome`，因此搬运时只需要搬运 `training_server_transfer/stage_b_bundle/` 这一个目录；其中 `raw_genomes/` 已包含训练端读取候选坐标所需的原始 `.fna.gz`。
+- 已新增 `DIRECTORY_STRUCTURE.md` 和 `TRANSFER_MANIFEST.md`，分别说明 GitHub/本地/bundle 目录结构、每个文件用途，以及训练服务器搬运命令和边界。
