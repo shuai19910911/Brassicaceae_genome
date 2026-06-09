@@ -25,3 +25,12 @@
 - 发现原 FASTA QC shard `8469415_0` 在 `mamba run` 启动阶段失败，错误为 libmamba JSON parse error，未进入 FASTA 数据处理主体，也未产生 shard 0 结果表。
 - 已仅补交失败 shard：`8469433_0`，分区 `q07`，申请 30 CPU 和 150 GB 内存。当前 `8469433_0` 已在 `cu16` 运行。
 - 当前运行状态：FASTA QC shard `8469415_1`、`8469415_2`、`8469433_0` 均在运行；annotation parse shard `8469414_0`、`8469414_1` 在运行，`8469414_2` 等待资源。
+
+## 2026-06-09 10:12:51 CST
+
+- 第一轮 FASTA QC 与 GFF/GTF annotation parse 已完成。Annotation parse 三个 shard 均成功完成；FASTA QC 原 shard `8469415_0` 启动失败，但补交 shard `8469433_0` 已成功完成。
+- 已合并 FASTA QC 小表：`sequence_index/contigs.tsv` 共 202,346 条 contig 记录，`sequence_index/assembly_qc.tsv` 共 67 个 assembly 记录，`sequence_index/fasta_checksums.tsv` 共 67 个 checksum 记录。
+- 修正 FASTA QC 规则：连续 N run `>=5 kb` 只作为后续窗口切分断点，不再作为整条 contig 失败条件；整条 contig 主 QC 条件保留为 length、N fraction 与核基因组/未知分类。修正后 67 个结构注释可用 assembly 中 66 个通过 FASTA QC。
+- 当前唯一排除的结构注释可用 assembly 是 `Arabis_nemorensis_GCA_902206195.3`，原因是各 chromosome-level contig 的 N fraction 约 17.8%-21.5%，超过第一版主训练阈值 10%。
+- 已生成正式 assembly-level split：`data_manifests/brassicaceae_splits.tsv`，共 66 个 assembly；train 53、validation 8、test 5。
+- 已提交流式 annotation 坐标 QC 汇总任务 `8469612`，当前状态为 `PD (Resources)`，等待 q07 资源；该任务将输出 `annotation_index/annotation_feature_summary.tsv` 和 `annotation_index/annotation_coordinate_qc.tsv`。

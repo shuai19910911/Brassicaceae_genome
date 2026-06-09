@@ -61,7 +61,6 @@ def finalize_record(assembly_id: str, seq_id: str, chunks: list[str], min_len: i
     pass_qc = int(
         length >= min_len
         and n_fraction <= 0.10
-        and max_n_run < 5_000
         and classify_seq(seq_id) == "nuclear_or_unknown"
     )
     return {
@@ -179,4 +178,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
