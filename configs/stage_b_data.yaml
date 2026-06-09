@@ -1,0 +1,39 @@
+project: BrassicaceaeGenomeFM
+updated_at: "2026-06-09 10:12:51 CST"
+
+raw_genome_root: /home/user/zhangzhishuai/data/plantDB/genome
+
+manifest:
+  assemblies: data_manifests/brassicaceae_assemblies.tsv
+  splits: data_manifests/brassicaceae_splits.tsv
+
+sequence_index:
+  contigs: sequence_index/contigs.tsv
+  assembly_qc: sequence_index/assembly_qc.tsv
+  checksums: sequence_index/fasta_checksums.tsv
+
+annotation_index:
+  features_glob: annotation_index/features.shard*.tsv
+  introns_glob: annotation_index/introns.shard*.tsv
+  feature_summary: annotation_index/annotation_feature_summary.tsv
+  coordinate_qc: annotation_index/annotation_coordinate_qc.tsv
+
+sampling_index:
+  region_candidates_glob: sampling_index/region_candidates_8k.shard*.tsv
+  region_candidate_summary: data_manifests/region_candidates_8k_summary.tsv
+  context_len: 8192
+  background_stride: 65536
+
+stage_b_sampling:
+  formal_training: true
+  input_tokenization: single_nucleotide
+  dynamic_masking: true
+  dynamic_reverse_complement: true
+  mask_rate: 0.15
+  target_context_mix:
+    4096: 0.20
+    8192: 0.70
+    16384: 0.10
+  region_weight_column: region_weight
+  split_column: split
+

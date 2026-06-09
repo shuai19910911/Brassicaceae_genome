@@ -34,3 +34,12 @@
 - 当前唯一排除的结构注释可用 assembly 是 `Arabis_nemorensis_GCA_902206195.3`，原因是各 chromosome-level contig 的 N fraction 约 17.8%-21.5%，超过第一版主训练阈值 10%。
 - 已生成正式 assembly-level split：`data_manifests/brassicaceae_splits.tsv`，共 66 个 assembly；train 53、validation 8、test 5。
 - 已提交流式 annotation 坐标 QC 汇总任务 `8469612`，当前状态为 `PD (Resources)`，等待 q07 资源；该任务将输出 `annotation_index/annotation_feature_summary.tsv` 和 `annotation_index/annotation_coordinate_qc.tsv`。
+
+## 2026-06-09 10:54:05 CST
+
+- 将 annotation 坐标 QC 从 q07 pending job `8469612` 取消后改投 q08；高资源 pending job `8469620` 也取消，低资源 job `8469622` 使用 8 CPU/32 GB 成功完成。该任务流式扫描 53,274,482 行，输出 `annotation_index/annotation_feature_summary.tsv` 和 `annotation_index/annotation_coordinate_qc.tsv`。
+- Annotation 坐标 QC 结果：总 invalid coordinate 23 行，invalid fraction 0.00000043，可在后续候选窗口构建时过滤，不影响进入 sampling index 阶段。
+- 已生成 8K region-aware 候选窗口，SLURM array job `8469629` 三个 shard 均成功完成，输出到 `sampling_index/region_candidates_8k.shard00.tsv`、`shard01.tsv`、`shard02.tsv`。
+- Region candidate 总量为 30,757,136 个 8K 窗口；split 分布为 train 23,995,104、validation 4,311,272、test 2,450,760；region 分布以 CDS 15,090,276、intron 8,465,378、exon 3,731,972 为主，background 417,004。
+- 已生成 Stage B 正式采样计划 `data_manifests/stage_b_sampling_plan.tsv`：目标 train tokens 20B，对应 2,441,406 个 8K 窗口；validation/test 各抽 50,000 个 8K 窗口用于阶段性评估。
+- 已新增 Stage B 数据配置 `configs/stage_b_data.yaml`，训练端应按 sharded candidate + dynamic masking + dynamic reverse-complement 读取，不合并大 candidate 表，也不提前固化 mask。
