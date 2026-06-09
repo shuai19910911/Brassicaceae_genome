@@ -12,3 +12,10 @@
 - 完成文献与前沿路线调研，纳入 Nucleotide Transformer、DNABERT-2、HyenaDNA、Caduceus、PlantCAD/PlantCaduceus、GPN、SegmentNT、AgroNT 和 2025 DNA foundation model benchmark 的设计启发。
 - 生成项目入口 README、完整训练计划 `PROJECT_PLAN.md` 和模型结构解析 `MODEL_STRUCTURE.md`。
 
+## 2026-06-09 09:29:34 CST
+
+- 开始第一轮正式数据处理。新增可复用处理脚本：`scripts/build_manifest.py`、`scripts/fasta_qc.py`、`scripts/parse_annotations.py`，以及 SLURM array 提交脚本 `slurm/run_fasta_qc_shard.sh`、`slurm/run_annotation_parse_shard.sh`。
+- 已生成 manifest：`data_manifests/brassicaceae_assemblies.tsv`，共 220 个十字花科 assembly 记录，其中 67 个 `train_eligible=1`，与 2026-06-08 数据盘点一致。
+- 已提交 GFF/GTF 结构注释解析 array job：`8469414`，分区 `q08`，array `0-2`，每个 shard 申请 30 CPU 和 150 GB 内存，输出到 `annotation_index/features.shard*.tsv` 与 `annotation_index/introns.shard*.tsv`。
+- 已提交 FASTA 流式 QC array job：`8469415`，分区 `q07`，array `0-2`，每个 shard 申请 30 CPU 和 150 GB 内存，输出到 `sequence_index/contigs.shard*.tsv`、`sequence_index/assembly_qc.shard*.tsv` 与 `sequence_index/fasta_checksums.shard*.tsv`。
+- 当前 SLURM 状态：两个 array job 均已进入队列，状态为 `PD (Resources)`，等待计算节点资源。
