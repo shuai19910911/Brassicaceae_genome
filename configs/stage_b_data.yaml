@@ -40,3 +40,19 @@ stage_b_sampling:
     16384: 0.10
   region_weight_column: region_weight
   split_column: split
+
+token_shards:
+  gpu_ready: true
+  directory: stage_b_token_shards
+  manifest: stage_b_token_shards/manifest.tsv
+  summary: stage_b_token_shards/summary.json
+  shard_plan: data_manifests/stage_b_token_shard_plan.tsv
+  dtype: uint8
+  token_map:
+    A: 0
+    C: 1
+    G: 2
+    T: 3
+    N: 4
+  dynamic_masking: true
+  dynamic_reverse_complement: true

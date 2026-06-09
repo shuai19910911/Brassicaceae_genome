@@ -1,6 +1,6 @@
 # Brassicaceae_genome
 
-更新时间：2026-06-09 13:29:03 CST
+更新时间：2026-06-09 17:14:06 CST
 
 BrassicaceaeGenomeFM 是面向十字花科（Brassicaceae）的结构注释驱动 DNA foundation model 项目。第一版目标不是测试版或玩具模型，而是直接按正式大模型训练口径准备：使用高质量 genome FASTA、GFF/GTF 结构注释、区域加权采样、长上下文 bidirectional Mamba/Caduceus 风格 backbone、reverse-complement 一致性训练和多任务结构监督。
 
@@ -31,7 +31,8 @@ Stage B 数据已经处理到可搬运状态：
 
 - 4K/8K/16K region-aware candidate window 均已生成，每个 context 3 个 shard。
 - 正式采样计划为 20B train tokens，使用 4K/8K/16K 混合上下文。
-- 训练服务器单目录搬运包已生成：`training_server_transfer/stage_b_bundle/`，约 21G，包含 66 个 raw genome FASTA 和训练端需要的索引/配置。
+- GPU-ready token shard 已在当前 CPU/SLURM 服务器生成，训练端可直接 mmap 读取 `uint8` token，不需要训练时反复解压 FASTA。
+- 训练服务器单目录搬运包已生成：`training_server_transfer/stage_b_bundle/`，约 43G，包含 66 个 raw genome FASTA、坐标索引、GPU-ready token shard 和训练端需要的索引/配置。
 - 训练服务器不能访问原始 genome 目录时，只搬运 `training_server_transfer/stage_b_bundle/` 这一个目录即可。
 
 ## 文档

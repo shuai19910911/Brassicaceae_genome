@@ -21,6 +21,34 @@ TARGET_REGION_MIX = {
 }
 
 
+def allocate_region_windows(region_counts: dict[str, int], total_windows: int) -> dict[str, int]:
+    raw_targets = {region: total_windows * mix for region, mix in TARGET_REGION_MIX.items()}
+    allocations = {}
+    remainders = []
+    for region, raw in raw_targets.items():
+        available = region_counts.get(region, 0)
+        target = min(available, int(raw))
+        allocations[region] = target
+        if target < available:
+            remainders.append((raw - int(raw), region))
+
+    remaining = total_windows - sum(allocations.values())
+    while remaining > 0:
+        progressed = False
+        for _, region in sorted(remainders, reverse=True):
+            available = region_counts.get(region, 0)
+            if allocations[region] >= available:
+                continue
+            allocations[region] += 1
+            remaining -= 1
+            progressed = True
+            if remaining == 0:
+                break
+        if not progressed:
+            break
+    return allocations
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -47,8 +75,11 @@ def load_counts(path: Path) -> tuple[dict[str, int], dict[str, int]]:
         for row in csv.DictReader(handle, delimiter="\t"):
             if row["metric"] == "split":
                 split_counts[row["name"]] = int(row["count"])
-            elif row["metric"] == "region":
-                region_counts[row["name"]] = int(row["count"])
+    by_assembly = Path(str(path).replace("_summary.tsv", "_by_assembly.tsv"))
+    with by_assembly.open() as handle:
+        for row in csv.DictReader(handle, delimiter="\t"):
+            if row["split"] == "train":
+                region_counts[row["region"]] = region_counts.get(row["region"], 0) + int(row["count"])
     return split_counts, region_counts
 
 
@@ -81,9 +112,9 @@ def main() -> None:
             context_train_tokens = int(args.target_train_tokens * token_fraction)
             train_windows = context_train_tokens // context_len
             total_target_train_windows += train_windows
-            for region, mix in TARGET_REGION_MIX.items():
+            region_allocations = allocate_region_windows(region_counts, train_windows)
+            for region, target in region_allocations.items():
                 available = region_counts.get(region, 0)
-                target = min(available, int(train_windows * mix))
                 writer.writerow(
                     {
                         "split": "train",

@@ -52,3 +52,13 @@
 - 已创建训练服务器单目录搬运包：`training_server_transfer/stage_b_bundle/`。该目录当前约 21G，包含 66 个通过 QC 并进入 split 的 raw genome FASTA、9 个 sampling candidate shard、FASTA QC、annotation summary/QC、训练配置、数据 manifest、处理脚本和文件清单。
 - 训练服务器不能访问 `/home/user/zhangzhishuai/data/plantDB/genome`，因此搬运时只需要搬运 `training_server_transfer/stage_b_bundle/` 这一个目录；其中 `raw_genomes/` 已包含训练端读取候选坐标所需的原始 `.fna.gz`。
 - 已新增 `DIRECTORY_STRUCTURE.md` 和 `TRANSFER_MANIFEST.md`，分别说明 GitHub/本地/bundle 目录结构、每个文件用途，以及训练服务器搬运命令和边界。
+
+## 2026-06-09 17:14:06 CST
+
+- 回答并落实 GPU 训练吞吐问题：不再建议训练时直接从 `.fna.gz` 按坐标反复抽序列；已在当前 CPU/SLURM 服务器预生成 GPU-ready `uint8` token shard，训练服务器可直接 mmap 读取。
+- 新增并运行 Stage B token materialization 流程：`scripts/build_stage_b_token_shard_plan.py`、`scripts/build_stage_b_token_shards.py`、`scripts/summarize_stage_b_token_shards.py` 和 `slurm/run_stage_b_token_shards.sh`。
+- 修正采样计划生成逻辑：train region 可用数改为从 `region_candidates_*_by_assembly.tsv` 统计 train-only count，避免把 validation/test 的 region 窗口误计入 train；稀有 region 不足时自动回填到其他有容量 region。
+- 已生成 `data_manifests/stage_b_token_shard_plan.tsv`，按 12 个 owner shard 分配采样目标；核验结果为 train 2,807,616 windows、19,999,989,760 tokens，且无 shard 超过可用窗口。
+- 最终 token shard job `8470518` 已在 `cu` 分区完成，12 个 array 分片均 `COMPLETED`；最大 RSS 约 396-492 MB/分片，单分片耗时约 14:49-16:04。
+- `stage_b_token_shards/` 已生成并汇总：train 19,999,989,760 tokens、2,807,616 windows；validation 1,433,600,000 tokens、150,000 windows；test 1,433,600,000 tokens、150,000 windows。目录大小约 22G。
+- 已刷新 `training_server_transfer/stage_b_bundle/`，将 GPU-ready token shards 纳入同一个搬运目录；当前 bundle 约 43G，`TRANSFER_FILES.tsv` 194 行，含表头，对应 193 个 bundle 文件。

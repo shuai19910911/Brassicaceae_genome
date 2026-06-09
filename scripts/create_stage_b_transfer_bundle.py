@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import glob
 import os
 import shutil
 from pathlib import Path
@@ -67,6 +68,7 @@ def main() -> None:
             "region_candidates_16k_summary.tsv",
             "region_candidates_16k_by_assembly.tsv",
             "stage_b_sampling_plan.tsv",
+            "stage_b_token_shard_plan.tsv",
         ],
         "configs": ["stage_b_data.yaml"],
         "sequence_index": ["contigs.tsv", "assembly_qc.tsv", "fasta_checksums.tsv"],
@@ -93,6 +95,9 @@ def main() -> None:
             "build_region_candidates.py",
             "summarize_region_candidates.py",
             "build_stage_b_sampling_plan.py",
+            "build_stage_b_token_shard_plan.py",
+            "build_stage_b_token_shards.py",
+            "summarize_stage_b_token_shards.py",
             "create_stage_b_transfer_bundle.py",
         ],
     }
@@ -105,6 +110,13 @@ def main() -> None:
                 missing.append(str(src))
                 continue
             link_or_copy(src, bundle / dirname / name)
+
+    token_shard_dir = Path("stage_b_token_shards")
+    if token_shard_dir.exists():
+        for pattern in ["*.bin", "*.idx.tsv", "*.stats.json", "manifest.tsv", "summary.json"]:
+            for src_s in sorted(glob.glob(str(token_shard_dir / pattern))):
+                src = Path(src_s)
+                link_or_copy(src, bundle / token_shard_dir.name / src.name)
 
     raw_manifest = bundle / "raw_genomes_manifest.tsv"
     with raw_manifest.open("w", newline="") as handle:

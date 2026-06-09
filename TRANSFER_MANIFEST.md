@@ -1,6 +1,6 @@
 # Stage B 训练服务器搬运说明
 
-更新时间：2026-06-09 13:29:03 CST
+更新时间：2026-06-09 17:14:06 CST
 
 训练服务器不能访问：
 
@@ -18,7 +18,7 @@
 /home/user/zhangzhishuai/myhermes/Brassicaceae_genomemodel/training_server_transfer/stage_b_bundle
 ```
 
-当前目录大小约 21G，包含 66 个 split assembly 的 raw genome FASTA 和 Stage B 训练所需全部轻量/中量索引。搬运时不要只搬 `sampling_index/`，因为训练服务器不能访问登录节点上的原始 genome 目录。
+当前目录大小约 43G，包含 66 个 split assembly 的 raw genome FASTA、Stage B 坐标索引、GPU-ready token shard 和训练所需全部轻量/中量索引。搬运时不要只搬 `sampling_index/`，因为训练服务器不能访问登录节点上的原始 genome 目录。
 
 搬运到训练服务器后，训练代码应以该目录作为数据根目录。建议目标路径例如：
 
@@ -38,6 +38,7 @@ stage_b_bundle/
   sequence_index/
   annotation_index/
   sampling_index/
+  stage_b_token_shards/
   scripts/
 ```
 
@@ -98,6 +99,21 @@ region_candidates_16k.shard*.tsv
 
 这些不是测试数据，也不是 toy subset。它们覆盖 66 个正式 split assembly，并由动态 masking、动态 reverse-complement 和 region 权重在训练时采样。
 
+### `stage_b_token_shards/`
+
+Stage B 正式训练优先使用这个目录，而不是训练时实时解压 FASTA。该目录包含已按采样计划提取好的 `uint8` token：
+
+```text
+train_00000.bin ... train_00011.bin
+train_00000.idx.tsv ... train_00011.idx.tsv
+validation_*.bin / validation_*.idx.tsv
+test_*.bin / test_*.idx.tsv
+manifest.tsv
+summary.json
+```
+
+token 编码为 A=0、C=1、G=2、T=3、N/其他=4。训练端应 mmap `.bin`，按 `.idx.tsv` 的 offset/length 切片；dynamic masking 和 reverse-complement augmentation 仍在训练时做，不需要固化到 shard。
+
 ### `scripts/`
 
 保留生成和审计数据的脚本，方便训练服务器上复查。
@@ -127,6 +143,6 @@ tar -C /home/user/zhangzhishuai/myhermes/Brassicaceae_genomemodel/training_serve
 
 ## 当前阶段边界
 
-该 bundle 支持 Stage B 正式训练：4K/8K/16K context mix、20B train tokens、validation/test 各 50,000 窗口。
+该 bundle 支持 Stage B 正式训练：4K/8K/16K context mix、train 19,999,989,760 tokens、validation/test 各 150,000 窗口。训练时优先读取 `stage_b_token_shards/`；`raw_genomes/` 和 `sampling_index/` 保留用于审计、复现和后续重建。
 
 尚未生成 C1/C2/D 的 32K/64K/128K candidate 和采样计划。如果要训练长上下文阶段，需要在 Stage B 后继续生成对应候选窗口或在训练服务器上用 annotation shard 重建。

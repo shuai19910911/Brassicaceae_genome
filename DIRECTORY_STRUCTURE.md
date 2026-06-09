@@ -1,6 +1,6 @@
 # BrassicaceaeGenomeFM 目录结构与文件说明
 
-更新时间：2026-06-09 13:29:03 CST
+更新时间：2026-06-09 17:14:06 CST
 
 本仓库只上传轻量说明、脚本、配置和小型 manifest。大体积训练数据保存在本地，并通过 `training_server_transfer/stage_b_bundle/` 统一搬运到训练服务器。
 
@@ -17,6 +17,7 @@
 - `region_candidates_16k_summary.tsv`：16K 候选窗口总数、split 分布、region 分布。
 - `region_candidates_16k_by_assembly.tsv`：16K 候选窗口按 assembly/split/region 汇总。
 - `stage_b_sampling_plan.tsv`：Stage B 正式训练采样计划，目标 20B train tokens，包含每个 region 的可用窗口数、目标窗口数、目标 token 数和采样比例。
+- `stage_b_token_shard_plan.tsv`：GPU-ready token shard 生成计划，记录每个 split/context/region 在 12 个输出 shard 中的可用窗口和目标窗口。
 
 ### `configs/`
 
@@ -34,6 +35,9 @@
 - `build_region_candidates.py`：按 4K/8K/16K context 生成 region-aware candidate window shard。
 - `summarize_region_candidates.py`：统计 candidate shard 的 split/region/assembly 分布。
 - `build_stage_b_sampling_plan.py`：根据 candidate summary 生成 Stage B 20B token 采样计划。
+- `build_stage_b_token_shard_plan.py`：根据 candidate owner 分布生成 per-shard token materialization 计划。
+- `build_stage_b_token_shards.py`：按 shard plan 从 FASTA 提取序列并写出 GPU-ready `uint8` token shard。
+- `summarize_stage_b_token_shards.py`：汇总 token shard 的窗口数、token 数和文件清单。
 - `create_stage_b_transfer_bundle.py`：生成训练服务器搬运用单目录 bundle。
 
 ### `slurm/`
@@ -44,6 +48,7 @@
 - `run_region_candidates_4k.sh`：生成 4K candidate window shard。
 - `run_region_candidates_8k.sh`：生成 8K candidate window shard。
 - `run_region_candidates_16k.sh`：生成 16K candidate window shard。
+- `run_stage_b_token_shards.sh`：生成 Stage B GPU-ready token shard；使用 `python3` 标准库直接运行，不依赖 `mamba run`。
 
 ### 项目根目录文档
 
@@ -87,8 +92,19 @@ Stage B 训练只需要 `annotation_feature_summary.tsv` 和 `annotation_coordin
 
 当前 bundle 验收结果：
 
-- 总大小：约 21G。
+- 总大小：约 43G。
 - `raw_genomes_manifest.tsv`：67 行，含表头，对应 66 个 raw genome FASTA。
-- `TRANSFER_FILES.tsv`：104 行，含表头，对应 103 个 bundle 文件。
+- `TRANSFER_FILES.tsv`：194 行，含表头，对应 193 个 bundle 文件。
 - `sampling_index/`：4K、8K、16K 各 3 个 candidate shard。
 - `data_manifests/stage_b_sampling_plan.tsv`：34 行，含表头，覆盖 4K/8K/16K 的 train、validation、test 采样计划。
+- `stage_b_token_shards/`：GPU-ready `uint8` token shard，训练服务器可直接 mmap 读取。
+
+### `stage_b_token_shards/`
+
+- `train_00000.bin` 到 `train_00011.bin`：训练 token 二进制 shard，`uint8` 编码，A=0、C=1、G=2、T=3、N/其他=4。
+- `train_00000.idx.tsv` 到 `train_00011.idx.tsv`：训练 shard 索引，记录每条 window 在 `.bin` 中的 byte offset、length、assembly、seq、start/end、context 和 region。
+- `validation_*.bin/.idx.tsv`：validation GPU-ready token shard。
+- `test_*.bin/.idx.tsv`：test GPU-ready token shard。
+- `shard_*.stats.json`：每个输出 shard 的窗口数和 token 数。
+- `manifest.tsv`：全部 `.bin/.idx.tsv` 文件清单。
+- `summary.json`：全局 token/window 汇总；train 为 19,999,989,760 tokens。
