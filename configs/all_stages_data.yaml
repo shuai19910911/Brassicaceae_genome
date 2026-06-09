@@ -1,0 +1,95 @@
+project: BrassicaceaeGenomeFM
+updated_at: "2026-06-09 23:29:57 CST"
+bundle_root: "."
+
+token_encoding:
+  dtype: uint8
+  alphabet:
+    A: 0
+    C: 1
+    G: 2
+    T: 3
+    N_or_other: 4
+
+augmentation:
+  dynamic_masking: true
+  dynamic_reverse_complement: true
+  mask_is_not_materialized_in_shards: true
+
+shared_files:
+  raw_genomes_manifest: raw_genomes_manifest.tsv
+  assembly_splits: data_manifests/brassicaceae_splits.tsv
+  fasta_qc: sequence_index/assembly_qc.tsv
+  contig_index: sequence_index/contigs.tsv
+  annotation_qc: annotation_index/annotation_coordinate_qc.tsv
+
+stages:
+  stage_b:
+    purpose: medium_context_formal_pretraining
+    context_lengths: [4096, 8192, 16384]
+    token_shard_dir: stage_b_token_shards
+    manifest: stage_b_token_shards/manifest.tsv
+    summary: stage_b_token_shards/summary.json
+    sampling_plan: data_manifests/stage_b_sampling_plan.tsv
+    token_shard_plan: data_manifests/stage_b_token_shard_plan.tsv
+    actual_tokens:
+      train: 19999989760
+      validation: 1433600000
+      test: 1433600000
+    actual_windows:
+      train: 2807616
+      validation: 150000
+      test: 150000
+
+  stage_c1:
+    purpose: long_context_32k_curriculum
+    context_lengths: [8192, 16384, 32768]
+    token_shard_dir: stage_c1_token_shards
+    manifest: stage_c1_token_shards/manifest.tsv
+    summary: stage_c1_token_shards/summary.json
+    sampling_plan: data_manifests/stage_c1_sampling_plan.tsv
+    token_shard_plan: data_manifests/stage_c1_token_shard_plan.tsv
+    actual_tokens:
+      train: 19995648000
+      validation: 2867200000
+      test: 2867200000
+    actual_windows:
+      train: 1037361
+      validation: 150000
+      test: 150000
+    notes:
+      - "Small train shortfall is recorded in shard stats for scarce train|32768|transcript groups."
+
+  stage_c2:
+    purpose: long_context_64k_curriculum
+    context_lengths: [8192, 32768, 65536]
+    token_shard_dir: stage_c2_token_shards
+    manifest: stage_c2_token_shards/manifest.tsv
+    summary: stage_c2_token_shards/summary.json
+    sampling_plan: data_manifests/stage_c2_sampling_plan.tsv
+    token_shard_plan: data_manifests/stage_c2_token_shard_plan.tsv
+    actual_tokens:
+      train: 9999958016
+      validation: 5324800000
+      test: 5324800000
+    actual_windows:
+      train: 289916
+      validation: 150000
+      test: 150000
+
+  stage_d:
+    purpose: ultra_long_context_128k_curriculum
+    context_lengths: [32768, 65536, 131072]
+    token_shard_dir: stage_d_token_shards
+    manifest: stage_d_token_shards/manifest.tsv
+    summary: stage_d_token_shards/summary.json
+    sampling_plan: data_manifests/stage_d_sampling_plan.tsv
+    token_shard_plan: data_manifests/stage_d_token_shard_plan.tsv
+    actual_tokens:
+      train: 3999956992
+      validation: 11468800000
+      test: 11468800000
+    actual_windows:
+      train: 45776
+      validation: 150000
+      test: 150000

@@ -62,3 +62,13 @@
 - 最终 token shard job `8470518` 已在 `cu` 分区完成，12 个 array 分片均 `COMPLETED`；最大 RSS 约 396-492 MB/分片，单分片耗时约 14:49-16:04。
 - `stage_b_token_shards/` 已生成并汇总：train 19,999,989,760 tokens、2,807,616 windows；validation 1,433,600,000 tokens、150,000 windows；test 1,433,600,000 tokens、150,000 windows。目录大小约 22G。
 - 已刷新 `training_server_transfer/stage_b_bundle/`，将 GPU-ready token shards 纳入同一个搬运目录；当前 bundle 约 43G，`TRANSFER_FILES.tsv` 194 行，含表头，对应 193 个 bundle 文件。
+
+## 2026-06-09 23:29:57 CST
+
+- 按用户要求补齐所有训练阶段数据，使训练服务器存储足够时可以一次性搬运多阶段数据；GPU 训练端不需要访问登录节点原始 genome 目录。
+- 已生成长上下文 region-aware candidate window：32K 共 30,061,578 个候选窗口，64K 共 29,677,881 个候选窗口，128K 共 29,240,062 个候选窗口；每个 context 均为 3 个 shard。
+- 已生成 C1/C2/D 采样计划与 per-shard token materialization 计划：C1 目标 20B train tokens，8K/16K/32K 混合；C2 目标 10B train tokens，8K/32K/64K 混合；D 目标 4B train tokens，32K/64K/128K 混合。
+- Stage C1 token shard job `8529096` 已完成，12 个 array 分片均 `COMPLETED`；`stage_c1_token_shards/` 约 25G，train 19,995,648,000 tokens、1,037,361 windows，validation/test 各 2,867,200,000 tokens、150,000 windows。C1 少量短缺来自 `train|32768|transcript` 候选不足，脚本已记录 `shortfalls`，不是任务失败。
+- Stage C2 token shard job `8529098` 已完成，12 个 array 分片均 `COMPLETED`；`stage_c2_token_shards/` 约 20G，train 9,999,958,016 tokens、289,916 windows，validation/test 各 5,324,800,000 tokens、150,000 windows。
+- Stage D token shard job `8529097` 已完成，12 个 array 分片均 `COMPLETED`；`stage_d_token_shards/` 约 26G，train 3,999,956,992 tokens、45,776 windows，validation/test 各 11,468,800,000 tokens、150,000 windows。
+- 已生成全阶段训练服务器搬运包：`training_server_transfer/all_stages_bundle/`，约 125G，包含 66 个 raw genome FASTA、4K/8K/16K/32K/64K/128K candidate shard、B/C1/C2/D GPU-ready token shard、manifest、配置、脚本和说明文档；`TRANSFER_FILES.tsv` 480 行，含表头，对应 479 个文件；未生成 `MISSING_PATTERNS.txt`，说明必需模式均已找到。

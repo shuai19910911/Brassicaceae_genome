@@ -3,7 +3,7 @@ data_manifests/*.parquet
 sequence_index/
 annotation_index/
 sampling_index/
-stage_b_token_shards/
+stage_*_token_shards/
 stage_inputs/
 training_server_transfer/
 logs/

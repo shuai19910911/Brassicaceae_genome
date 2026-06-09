@@ -54,11 +54,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--summary-spec",
         action="append",
-        default=[
-            "4096:0.20:data_manifests/region_candidates_4k_summary.tsv",
-            "8192:0.70:data_manifests/region_candidates_8k_summary.tsv",
-            "16384:0.10:data_manifests/region_candidates_16k_summary.tsv",
-        ],
+        default=None,
         help="Context specification as context_len:token_fraction:summary_path. Repeatable.",
     )
     parser.add_argument("--out", default="data_manifests/stage_b_sampling_plan.tsv")
@@ -85,8 +81,13 @@ def load_counts(path: Path) -> tuple[dict[str, int], dict[str, int]]:
 
 def main() -> None:
     args = parse_args()
+    summary_specs = args.summary_spec or [
+        "4096:0.20:data_manifests/region_candidates_4k_summary.tsv",
+        "8192:0.70:data_manifests/region_candidates_8k_summary.tsv",
+        "16384:0.10:data_manifests/region_candidates_16k_summary.tsv",
+    ]
     specs = []
-    for spec in args.summary_spec:
+    for spec in summary_specs:
         context_len_s, token_fraction_s, summary_path_s = spec.split(":", 2)
         specs.append((int(context_len_s), float(token_fraction_s), Path(summary_path_s)))
     out = Path(args.out)
