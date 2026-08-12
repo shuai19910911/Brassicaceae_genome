@@ -1,0 +1,74 @@
+{
+  "schema": "brassi_training_summary_v1",
+  "total_optimizer_steps": 1821,
+  "total_unique_tokens_covered": 0,
+  "mlm_loss_recent_50step_avg": 1.499918187926043,
+  "mlm_loss_min": 1.2268275527721262,
+  "contexts": {
+    "4096": {
+      "steps": 182,
+      "recent_5step_avg": 1.3675188791480049,
+      "range": [
+        1.2674585729675625,
+        841.0928338762214
+      ]
+    },
+    "8192": {
+      "steps": 364,
+      "recent_5step_avg": 1.6669095226895174,
+      "range": [
+        1.2533949253712369,
+        840.7571196094385
+      ]
+    },
+    "16384": {
+      "steps": 382,
+      "recent_5step_avg": 1.393184801540887,
+      "range": [
+        1.2567888488172025,
+        841.3396392731217
+      ]
+    },
+    "32768": {
+      "steps": 492,
+      "recent_5step_avg": 1.7122259134452356,
+      "range": [
+        1.2443448785605289,
+        843.8856561546287
+      ]
+    },
+    "65536": {
+      "steps": 401,
+      "recent_5step_avg": 1.6361964066208885,
+      "range": [
+        1.2268275527721262,
+        840.6879620210241
+      ]
+    }
+  },
+  "checkpoints": [
+    500,
+    1000,
+    1500
+  ],
+  "gradient_norm_recent_avg": 700.58,
+  "last_step": 1821,
+  "distributed_mode": "fsdp",
+  "checkpoint_group_size": 6,
+  "gradient_accumulation": 4,
+  "contexts_trained": [
+    4096,
+    8192,
+    16384,
+    32768,
+    65536
+  ],
+  "per_rank_microbatch": {
+    "4096": 16,
+    "8192": 8,
+    "16384": 4,
+    "32768": 2,
+    "65536": 1
+  },
+  "tokens_per_step": 786432
+}
