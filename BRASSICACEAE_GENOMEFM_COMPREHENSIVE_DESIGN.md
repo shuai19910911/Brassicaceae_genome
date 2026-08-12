@@ -130,7 +130,8 @@ Assembly receipt至少包含总长度、contig数、N50/L50、最大contig、N�
 - **train**：预训练参数更新；无预定累计token上限。首轮unique容量由新release实测，后续processed exposure通过coverage cycle受控增加。
 - **development split**：只用于固定MLM panel、训练诊断和checkpoint选择；不参与参数更新。
 - **sealed pretraining test**：winner冻结后一次性评估预训练语言建模能力。
-- **acceptance pool**：永久排除于train/development/test和正式下游，用完整模型做128K硬件/语义验收。
+- **保留acceptance split**：bundle中有4,320个旧设计窗口；正式v1代码不读取、不训练、不报告其结果，保持sealed/unused。
+- **runtime GPU acceptance**：不是额外数据split；step 1前只读正式train bundle的确定性ordinal，以零学习率临时optimizer验证真实128K执行几何，不推进sampler或权重。
 - **Brassicales外群和整属留出**：不参加Brassicaceae主体预训练，用于true genus/species holdout和迁移。
 
 下游任务拥有独立的orthogroup、cultivar、study、LD block、haplotype clan、SV component或染色体block split。预训练90/5/5不能替代下游防泄漏。
@@ -161,9 +162,8 @@ Assembly receipt至少包含总长度、contig数、N50/L50、最大contig、N�
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
 | 固定development panel | 6 / 1,152 | 12 / 1,152 | 13 / 624 | 16 / 384 | 13 / 156 | 4 / 24 | 3,492 | 50,331,648 |
 | 一次性sealed pretraining test | 12 / 2,304 | 24 / 2,304 | 25 / 1,200 | 32 / 768 | 27 / 324 | 8 / 48 | 6,948 | 100,663,296 |
-| 完整模型acceptance pool | 10 / 1,920 | 10 / 960 | 10 / 480 | 10 / 240 | 10 / 120 | 100 / 600 | 4,320 | 117,964,800 |
 
-Development panel使用固定窗口、固定mask和固定RC方向，每2,000 steps评估一次。Sealed pretraining test只在winner按development NLL确定后读取一次。Acceptance pool中的100个128K optimizer steps必须连续执行，并在第50步保存、终止进程、从新进程精确恢复；其他五个长度各10 steps。三个集合的anchor及近重复组件两两不相交。
+bundle另保留4,320个、117,964,800 tokens的旧设计acceptance窗口；正式v1不为其建运行索引，也不读取或报告结果。Development panel使用固定窗口、固定mask和固定RC方向，每2,000 steps评估一次。Sealed pretraining test只在winner按development NLL确定后读取一次。正式torchrun在step 1之前执行一次不参与模型选择的最坏几何硬件验收：真实128K primary、强制RC、每rank 2对homeolog、反向、梯度裁剪和零学习率临时AdamW；PASS后销毁临时optimizer并创建全新正式optimizer。该验收只证明当前执行几何可运行，不替代development或sealed test证据，也不产生训练step。
 
 ### 4.8 数据release的物理组成
 
@@ -247,7 +247,7 @@ Development panel使用固定窗口、固定mask和固定RC方向，每2,000 ste
 
 ### 6.2 Region：可重叠植物结构
 
-九通道`BCEWithLogits`只在标签有效位置计算。类别权重从train估计，inverse-sqrt-frequency并clip到1–20。region不是互斥softmax，因为exon可以同时属于gene/CDS/UTR层级，TE也可能插入基因区域。
+九通道`BCEWithLogits`只在标签有效位置计算。正式v1冻结uniform 1.0通道权重；不可调用通道由valid-mask忽略。region不是互斥softmax，因为exon可以同时属于gene/CDS/UTR层级，TE也可能插入基因区域。
 
 ### 6.3 Frame：编码相位
 
@@ -255,7 +255,7 @@ Development panel使用固定窗口、固定mask和固定RC方向，每2,000 ste
 
 ### 6.4 Boundary：稀疏边界
 
-六个独立sigmoid通道，使用focal loss `gamma=2`；alpha由train prevalence产生并限制在0.05–0.95。负例必须来自同染色体、相同GC和相同区域背景。缺少实验TSS/TTS的“上游2 kb”只能是proxy，不算直接标签。
+六个独立sigmoid通道使用focal loss `gamma=2`、冻结`alpha=0.25`，只在该来源可调用的通道上计算；缺失实验TSS/TTS不会被伪造为负例。缺少实验TSS/TTS的“上游2 kb”只能是proxy，不算直接标签。
 
 ### 6.5 RC一致性：方向稳定
 
@@ -263,13 +263,13 @@ Development panel使用固定窗口、固定mask和固定RC方向，每2,000 ste
 
 ### 6.6 Homeolog/ortholog：十字花科关系监督
 
-高可信共线窗口做256维对称InfoNCE，temperature固定0.07。positive来自二倍体祖先—多倍体homeolog、A/B/C亚基因组homeolog和近缘ortholog。负例排除同orthogroup、近重复簇和关系不确定序列；同家族非共线拷贝才可作hard negative。
+正式v1对4K高可信共线窗口使用256维双向multi-positive InfoNCE，temperature固定0.07。每rank每个optimizer step从positive-edge池确定性取2对，三个rank的edge ordinal互不重叠；同一orthogroup是正例而不是负例。pair视图增加processed-forward token账，不冒充主语料unique exposure。
 
-进入每个coverage cycle前对train pair graph做edge-disjoint matching：一个anchor在当前cycle最多参加一个positive pair；pair两端使用相同context并同时预留。这样不会在同一cycle为了对比学习反复消费热门基因；跨cycle再次暴露必须进入统一cycle和token记账。
+positive-edge池使用cycle内不放回的仿射全排列；cycle、cursor、tail轮转和exposure进入完整checkpoint。这个实现优先保证当前3×40GB A100的显存闭合与可恢复性；跨rank超大negative bank属于后续新run合同，不能在正式v1中动态启用。
 
 ### 6.7 目标支配门禁
 
-正式run中loss权重不动态调整。Acceptance的train-only标签用于测六个加权目标对共享骨干的梯度norm。若辅助目标连续10步超过MLM梯度norm的50%且触发裁剪，则阻断；修订合同并新建run identity后重跑，禁止依据development/test调权重。
+正式run中loss权重不动态调整。启动前preflight固定loss常量与代码hash；训练逐step记录六个目标的loss、有效分母和global gradient norm，非有限值立即终止。任何权重修订都必须生成新run identity，禁止依据development/sealed test边跑边调。
 
 ---
 
@@ -281,11 +281,11 @@ Development panel使用固定窗口、固定mask和固定RC方向，每2,000 ste
 
 ### 7.2 coverage cycle、受控复用和数据平衡
 
-正式run不设置累计token或step上限。每个anchor冻结唯一context和主采样channel；在每个`context×region×genus×assembly/source` pool的coverage cycle内部严格无放回，首轮优先从未使用anchor。pool耗尽后才能进入下一cycle，同一context内任何pool最多领先其他强制pool一个cycle；小属或稀有功能pool不能通过无限重启少数locus维持名义配额。
+正式run不设置累计token或step上限。六个context各有一个覆盖全部train窗口的确定性仿射全排列pool；cycle内部严格无放回，三rank在同一optimizer step取得互不重叠的ordinal。pool尾不足一个完整全局batch时显式记入rotated-tail账并进入下一cycle，绝不静默复制。首个cycle优先覆盖从未使用anchor，pool耗尽后才进入受控复用。
 
-跨cycle允许受控复用，但新的动态MLM mask、RC方向或冻结范围内jitter不把来源坐标重新记成unique。训练同时记录：首次anchor暴露的`unique_corpus_tokens_covered`、每步固定增加的`scheduled_sampling_tokens`、包含RC额外视图的`processed_forward_tokens`以及六个目标各自的`valid_objective_targets`。另报告exposure-equivalent、cycle restart、exact-repeat和每个taxon/region/source的实际暴露；不把动态训练称为完成了若干严格epoch。
+跨cycle允许受控复用，但新的动态MLM mask和RC方向不把来源坐标重新记成unique。训练同时记录：首次anchor暴露的`unique_corpus_tokens_covered`、每步固定增加的`scheduled_sampling_tokens`、包含RC与homeolog额外视图的`processed_forward_tokens`以及六个目标各自的`valid_objective_targets`。另报告每context cycle/cursor、rotated tail和exact repeat；不把动态训练称为若干严格epoch。
 
-长期token比例为4K/8K/16K/32K/64K/128K=`9.5/19/19.5/25/21/6%`。以`context, region, genus, similarity_cluster, assembly, annotation_status`做累计token缺口调度；Brassica不超过55%，Arabidopsis约10%–15%，其他小属合计至少20%，单assembly原则上不超过3%，单近重复簇不超过1.5%。容量不足时记录deficit并按冻结优先级再分配，不根据development/test改比例。
+长期token比例为4K/8K/16K/32K/64K/128K=`9.5/19/19.5/25/21/6%`，由跨step累计token deficit scheduler实现。正式v1不额外施加taxon/source上限；每个来源在首轮的总暴露与其通过QC和去重后留下的唯一窗口容量一致。属、物种和assembly组成由冻结catalog离线统计，不能把自然容量比例误写成均匀物种采样。
 
 ### 7.3 优化器与WSD学习率
 
@@ -295,7 +295,7 @@ bf16参数/激活、FP32 residual、AdamW `betas=(0.9,0.95)`、`eps=1e-8`、weig
 
 331,661,083个训练参数按约16 bytes/parameter的保守状态预算约4.94 GiB。单条128K的1024维bf16 hidden约0.25 GiB，FP32 residual约0.50 GiB；若47层逐层保留hidden+residual边界，理论约35.25 GiB，所以“逐层checkpoint”不够。
 
-正式候选采用每4–6层一组的hierarchical/selective activation checkpoint、chunked selective scan/head、fused RMSNorm/scan。若仍不够，顺序是优化分组与kernel、optimizer-state sharding、保持全局状态连续的sequence parallel。不能缩模型、截断128K或把128K切成互不通信短块后继续使用原名称。
+正式实现把47层按连续组做non-reentrant activation checkpoint，并把head loss按8,192位置分块计算。每组4、5、6层是同一冻结代码身份下的允许候选，launcher默认5，并把实际选择绑定到preflight、128K acceptance和永久checkpoint；显存不足可直接改候选值重启，不改模型参数或数据身份。正式v1默认3进程DDP；FSDP full-state保存/重分片恢复代码已实现，但不能在同一checkpoint lineage中静默切换。不能缩模型、截断128K或把128K切成互不通信短块后继续使用原名称。
 
 ### 7.5 Checkpoint与winner
 
@@ -549,7 +549,7 @@ NaN/Inf、数据hash漂移、sampler cycle/cursor回退、同cycle重复anchor>0
 6. 构建sequence、structure、TE和pair store；生成真实六长度容量与混杂报告。
 7. 冻结各pool的coverage-cycle排列、跨cycle受控复用/deficit规则、长期context比例和首轮unique容量；表4.6只作10,000步参考记账。
 8. 完成331,661,083参数实现、单元测试、DDP全局分母和原子checkpoint。
-9. 在独立acceptance pool完成100个连续128K steps和五种其他长度各10 steps。
+9. q05完成全库CPU Gate和真实bundle只读smoke；用户授权后，launcher完成三卡空闲预检和step 1前单次真实128K最坏几何GPU acceptance。
 10. 启动无预定总token/step上限的唯一正式run；只用冻结development规则触发WSD decay，并按fixed development MLM NLL选winner。
 11. Winner、head、seed和baseline revision全部冻结后，执行公共任务和五seed下游。
 12. 一次读取sealed pretraining test和下游sealed test，做cluster bootstrap、permutation和Holm校正。
@@ -576,7 +576,7 @@ NaN/Inf、数据hash漂移、sampler cycle/cursor回退、同cycle重复anchor>0
 
 - 新的Brassicaceae assembly manifest及真实物种/属/倍性统计；
 - 六长度真实候选、QC后、首轮unique容量，以及按cycle/context/region/taxon/source累计的realized窗口、scheduled tokens和processed tokens；
-- train/development/test/acceptance各自hash与近重复交集为0的receipt；
+- train/development/test/保留acceptance各自hash与近重复交集为0的receipt；runtime GPU acceptance不是第五个split；
 - task exposure matrix与131,071 bp halo审计；
 - 自包含数据bundle及离线回读验证。
 
@@ -585,7 +585,7 @@ NaN/Inf、数据hash漂移、sampler cycle/cursor回退、同cycle重复anchor>0
 - 参数总数331,661,083的逐tensor清单；
 - 六长度forward/backward、RC坐标、远端依赖和DDP归一化测试；
 - 3×A100 40GB真实显存、tokens/s、step time和ETA；
-- 100个128K steps跨进程恢复receipt；
+- step 1前128K GPU acceptance回执，以及正式run达到500-step边界后的per-rank RNG exact-resume回执；
 - winner选择和一次性test访问记录。
 
 ### 下游完成时必须出现

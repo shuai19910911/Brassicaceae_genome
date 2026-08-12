@@ -178,7 +178,7 @@ split 在任何模型训练、标签统计或超参数选择前冻结：
 
 任务分为三条不能混写的证据轨道：
 
-1. **clean-inductive**：sealed test的assembly/区域/orthogroup/haplotype及其近重复组件全部从预训练train、development、acceptance pool和所有辅助标签中排除；区域级holdout还要向两侧扩展`max_context-1 = 131,071 bp`作为禁入halo，任何预训练窗口只要与halo相交就拒绝，防止128K窗口从外围包含test区域。只有这条轨道可支持“预训练和checkpoint选择均未见”。
+1. **clean-inductive**：sealed test的assembly/区域/orthogroup/haplotype及其近重复组件全部从预训练train、development、保留但当前未读取的acceptance split和所有辅助标签中排除；区域级holdout还要向两侧扩展`max_context-1 = 131,071 bp`作为禁入halo，任何预训练窗口只要与halo相交就拒绝，防止128K窗口从外围包含test区域。只有这条轨道可支持“预训练和checkpoint选择均未见”。
 2. **label-transfer**：允许目标无标签DNA进入MLM，但目标任务标签、配对和统计量完全隔离；只能称“标签迁移”，不能称序列未见。
 3. **public-exposure-unknown**：公共模型无法完整追溯预训练暴露时，保留比较但显式标记，不能把暴露不对称解释为纯架构胜负。
 
@@ -262,7 +262,7 @@ DataLoader 必须显式执行 `model_id = raw_id + 1`；PAD只能来自实际补
 
 另报告`exposure_equivalent = scheduled_sampling_tokens / first_cycle_token_capacity`、每个context/region/taxon/source的cycle restart次数、exact-repeat率和source-coordinate覆盖。这个比值只是平均暴露量，不等于每个anchor恰好被看了相同次数。
 
-固定development panel仍为64个step-equivalents、50,331,648 tokens、3,492个窗口，各长度step数为`6/12/13/16/13/4`；一次性sealed pretraining test为128个step-equivalents、100,663,296 tokens、6,948个窗口，各长度step数为`12/24/25/32/27/8`。完整模型acceptance pool由4K/8K/16K/32K/64K各10 steps和128K连续100 steps组成，共150 steps、117,964,800 tokens、4,320个窗口。三个panel与train的anchor/近重复组件两两不相交；development和test永远不跨cycle重采样。
+固定development panel仍为64个step-equivalents、50,331,648 tokens、3,492个窗口，各长度step数为`6/12/13/16/13/4`；一次性sealed pretraining test为128个step-equivalents、100,663,296 tokens、6,948个窗口，各长度step数为`12/24/25/32/27/8`。bundle还保留4,320个旧设计acceptance窗口，但正式v1启动代码不读取它们，也不执行旧150-step门禁；它们保持sealed/unused，不能被包装成已完成证据。development、sealed test、保留acceptance与train的anchor/近重复组件两两不相交，且不跨cycle重采样。step 1前的runtime GPU acceptance只读正式train bundle的确定性ordinal，不推进sampler、不更新权重，也不构成新的数据split。
 
 ### 5.3 平衡与小pool保护
 
@@ -307,7 +307,7 @@ GFF3必须与FASTA精确版本绑定：seqid一一映射、坐标不越界、str
 
 所有配对随 similarity cluster 一起分split，训练对不得引用development或sealed test成员。
 
-为同时满足pair objective和cycle内无放回，进入每个coverage cycle前在train pair graph上按证据等级、共线支持和确定性hash求edge-disjoint matching：一个anchor在当前cycle最多属于一个positive pair。pair两端使用相同context并作为一个调度单元同时预留；未入matching的anchor仍可作为普通MLM单例。catalog报告候选边、冲突边、最终matching和各属/亚基因组覆盖；同一partner只能在后续cycle重新进入，不能在当前cycle临时复用。
+为避免热门关系在每一步被反复抽到，正式runtime使用4K高可信positive-edge池的确定性仿射全排列；每rank每个optimizer step取2对，三个rank的edge ordinal互不重叠，池尾不足一个全局批次时显式轮转并进入下一cycle。pair端点作为关系辅助视图，增加`processed_forward_tokens`但不增加`scheduled_sampling_tokens`或`unique_corpus_tokens_covered`；pair pool的cycle/cursor/exposure与主窗口pool一起进入完整checkpoint。catalog继续报告候选边、冲突边、matching和各属/亚基因组覆盖。
 
 ## 7. 正式预训练目标
 
@@ -316,17 +316,17 @@ GFF3必须与FASTA精确版本绑定：seqid一一映射、坐标不越界、str
 `L = L_MLM + 0.25 L_region + 0.10 L_frame + 0.10 L_boundary + 0.05 L_RC + 0.05 L_homeolog`
 
 - `L_MLM`：所有窗口上的cross-entropy；从ACGT中选择15%目标位点，80%替换MASK、10%替换均匀随机ACGT、10%保持原样。目标预算的一半为singleton，另一半按支持集1…10、`p=0.35`的截断Geometric span填充；span不跨N/PAD/contig边界。N和PAD不作为有效预测目标。
-- `L_region`：仅直接或明确分层的有效区域位置，使用9通道`BCEWithLogits`；train-only inverse-sqrt-frequency权重clip到`[1,20]`。
-- `L_frame`：只在高可信且frame一致的CDS内使用4类cross-entropy，其他位置ignore。
-- `L_boundary`：在callable区域内使用sigmoid focal loss，`gamma=2`，每类`alpha`由train prevalence确定并clip到`[0.05,0.95]`；负例按同染色体、相同GC和区域背景匹配。
-- `L_RC`：对5%的anchor同时计算正向和反向互补视图；将最终层hidden按坐标/strand对齐并L2归一化，使用逐有效位置`1-cosine_similarity`均值。不声称模型在结构上严格RC等变。
-- `L_homeolog`：对高可信共线窗口做256维对称InfoNCE，cosine temperature固定`0.07`；在三个DDP rank间做可求导all-gather，排除同orthogroup、近重复簇和关系不确定序列后构造负例。
+- `L_region`：仅直接或明确分层的有效区域位置，使用9通道`BCEWithLogits`；正式v1使用冻结的uniform 1.0通道权重，缺失/不可调用通道通过valid-mask忽略。
+- `L_frame`：高可信标注来源中使用4类cross-entropy；非CDS为0类，同一位置存在相位冲突时ignore。
+- `L_boundary`：在callable通道内使用sigmoid focal loss，`gamma=2`、冻结`alpha=0.25`；不可调用通道通过valid-mask忽略。
+- `L_RC`：对5%的anchor增加反向互补视图；两种视图均经mask-aware pooling与256维L2归一化投影，使用`1-cosine_similarity`。不声称模型在结构上严格RC等变。
+- `L_homeolog`：每rank每步2对4K高可信共线窗口，使用256维双向multi-positive InfoNCE，cosine temperature固定`0.07`；同一orthogroup作为正例，不作为负例。三个rank使用互不重叠的pair ordinal，梯度再由DDP归约。
 
 所有分母按有效标签数归一化；没有某类标签的窗口不会产生0标签假负例。损失权重在正式训练前冻结，sealed test永不参与选择。
 
-跨gradient-accumulation和DDP不能先把每个micro-batch各自求均值再等权反向。实现必须预取一个accumulation window，分别统计六个目标的local numerator/denominator，all-reduce全局分母，并按有效目标数加权反向；否则4K和128K会被错误地按“窗口”而不是按“token/标签”加权。RC第二视图计入`processed_forward_tokens`和墙钟开销，但不增加`scheduled_sampling_tokens`；homeolog pair两个成员都必须在当前cycle尚未消费，并各自计入scheduled tokens，仅首次暴露时增加`unique_corpus_tokens_covered`。InfoNCE不得把同一orthogroup内未确认关系的序列当普通负例。
+跨gradient-accumulation和DDP不能先把每个micro-batch各自求均值再等权反向。实现先准备一个accumulation window，统计六个目标的local numerator/denominator，all-reduce全局分母，并按有效目标数缩放每个local loss sum；这样DDP平均后的梯度等于全局“损失和/有效目标数”。RC和homeolog额外视图都计入`processed_forward_tokens`和墙钟开销，但不增加`scheduled_sampling_tokens`或`unique_corpus_tokens_covered`；主窗口pool与pair pool分别维护cycle/cursor/exposure并一起恢复。
 
-正式run中禁止动态调loss权重。100-step acceptance gate使用train-only acceptance labels分别测六个加权目标对共享骨干的梯度范数；若任一辅助目标连续10个step超过MLM梯度范数的50%并同时触发总梯度裁剪，状态为`BLOCKED_OBJECTIVE_DOMINANCE`，只能在formal run identity生成前发布新的权重合同，不能边训练边自适应或查看development/test后改权重。
+正式run中禁止动态调loss权重。GPU启动前的零副作用preflight验证三张A100型号、空闲显存、compute PID、bundle/index/code identity；训练后每step记录六目标均值、有效分母和global gradient norm，非有限值立即终止。权重如需改变只能在新的formal run identity中完成，不能边训练边自适应或查看development/sealed test后修改。
 
 ## 8. 3×A100 40GB正式训练合同
 
@@ -347,13 +347,13 @@ GFF3必须与FASTA精确版本绑定：seqid一一映射、坐标不越界、str
 
 这是待硬件验收的目标batch，不是显存已通过的事实。按331,661,083个训练参数和约16 bytes/parameter的权重、梯度、FP32 master/Adam状态上界估算，模型训练状态约4.94 GiB；单条128K的bf16 hidden约0.25 GiB、FP32 residual约0.50 GiB。若把47层每个block边界都保存，hidden+residual边界理论量约35.25 GiB，说明“逐block checkpoint”本身并不能保证40GB可行。
 
-正式实现采用硬件实测冻结的hierarchical/selective activation checkpoint：候选以每4–6层为一组、只保存组边界并在反向重算，同时按块计算head loss，前/反向分支不同时保留大中间张量。若仍超显存，按固定顺序尝试：优化checkpoint分组与fused kernel → chunked selective scan/head → ZeRO-1或等价optimizer-state sharding → 保持全局状态连续的sequence parallel。所有方案必须保持331M参数、128K依赖范围和786,432 scheduled sampling tokens/step合同；不得缩小模型、截断上下文或静默删除128K。
+正式实现将47层按连续组做non-reentrant activation checkpoint，允许候选固定为每组4、5、6层；launcher默认5，并把实际值绑定到GPU preflight、128K acceptance和永久checkpoint。head loss按8,192位置分块，前/反向不同时保留全长logits。若默认值在真实三卡验收中显存不足，可在不改代码、配置或CPU Gate的前提下直接改用4或6重启。正式v1运行合同为3进程DDP；FSDP full-state保存与恢复代码可用，但不得在同一checkpoint lineage中静默切换。不得缩模型、截断128K或用独立短块冒充128K。
 
 ### 8.2 数值和优化器
 
 - bf16训练；FP32 residual accumulation；TF32可用于允许的矩阵运算；
 - fused Mamba selective scan、fused RMSNorm、fused AdamW；
-- hierarchical/selective activation checkpoint，分组和重算策略由完整128K门禁冻结；
+- non-reentrant activation checkpoint；每组4、5、6层为冻结候选，实际选择由preflight/acceptance/checkpoint绑定；
 - AdamW：`betas=(0.9, 0.95)`、`eps=1e-8`、`weight_decay=0.1`；
 - WSD（Warmup–Stable–Decay）学习率：前1,000 optimizer steps从0线性warmup到`3e-4`，随后在stable段保持`3e-4`且不预设结束step；冻结development停滞/过拟合条件触发后，执行固定10,000-step cosine decay到`3e-5`并停止；
 - global gradient norm clip=1.0；
@@ -364,18 +364,18 @@ GFF3必须与FASTA精确版本绑定：seqid一一映射、坐标不越界、str
 
 ### 8.3 正式启动门禁
 
-正式数据和完整330M模型完成后，必须使用一个从正式语料永久排除的acceptance pool运行真实128K硬件验收。它不是缩小模型的测试版，而是正式实现的可执行性验收：连续运行100个128K optimizer steps，在第50步原子保存并从新进程exact resume完成后50步；4K、8K、16K、32K和64K另外各完成10个optimizer steps，128K已由上述100步覆盖。门禁必须同时证明：
+完整代码与数据先通过q05 CPU Gate：全库pytest、六长度真实bundle只读回读、真实128K collator、homeolog pair、参数公式、26项下游registry和代码/配置identity全部进入不可变receipt。用户明确授权后，launcher再次验证三张A100 40GB无compute PID，发布绑定执行几何的preflight回执；三个rank在创建CUDA context前完成二次空闲探测并汇合。
 
-- 三张卡均参与；
+正式torchrun随后在step 1前执行一次最坏几何GPU acceptance：每rank一个真实128K primary、强制RC、2对4K homeolog，使用正式六目标执行器完成反向、全局分母归一化、gradient clip和零学习率临时AdamW。门禁必须同时证明：
+
+- 三张卡均参与，GPU UUID与preflight一致；
 - 无OOM、NaN、Inf和silent step skip；
-- remap正确，PAD/N的ignore逻辑正确；
-- 正反向和checkpoint恢复后的loss在容差内一致；
-- sampler恢复后没有重复anchor；
-- 100步内无OOM、NaN、Inf、显存持续增长或silent retry，peak reserved memory不超过38 GiB；
-- sustained tokens/s、每context step time、RC额外开销、checkpoint I/O和预计总时长来自真实测量；
-- central output对距离超过32K的远端碱基存在非零梯度/干预响应；同一locus的nested-window、remote-flank mask/shuffle和counterfactual replacement证明模型真正使用远端上下文，而不是只接受128K张量。
+- 真实128K、RC和homeolog有效目标均被执行；
+- 临时optimizer完整分配后记录三rank最大allocated/reserved显存；
+- 零学习率验收不产生正式optimizer step、不推进sampler、不写伪checkpoint；
+- PASS回执绑定run/release、DDP/FSDP模式、checkpoint group和preflight hash。
 
-只有门禁通过才允许开始无预定总token上限的正式run。若失败，项目状态为BLOCKED，不能改成玩具模型后声称完成。
+PASS后销毁临时optimizer并创建全新的正式optimizer，才允许step 1。默认checkpoint group=5；显存失败可直接改用冻结候选4或6重启，无需改代码或重排CPU Gate。若所有候选仍失败，项目状态为真实GPU BLOCKED，不能缩成玩具模型后声称完成。持续tokens/s、ETA、长程依赖证据和跨500-step exact resume属于正式run证据，不由单步启动验收冒充。
 
 ### 8.4 Checkpoint和选择
 
@@ -434,7 +434,7 @@ WSD decay一旦启动不得返回stable段、修改patience或延长衰减；完
 5. 建立单份sequence store、label store、window/pair catalog；
 6. 窗口QC、重叠anchor、per-base coverage及六个context的容量/混杂审计；
 7. 冻结各pool的coverage-cycle排列、跨cycle复用上限/deficit规则、长期context比例、task/exposure bindings和数据release hash；
-8. 完成330M模型、DDP、精确归一化、checkpoint和完整100-step 128K语义/硬件验收；
+8. 完成331,661,083参数模型、DDP/FSDP代码路径、精确归一化、per-rank RNG checkpoint、CPU端到端Gate和step 1前单步128K最坏几何GPU acceptance；
 9. 启动一条无预定总token/step上限的连续正式run；
 10. 只用冻结development条件触发WSD decay，并按固定development MLM NLL选择最终checkpoint；
 11. 冻结winner、head和全部seed后执行下游及一次sealed test；
