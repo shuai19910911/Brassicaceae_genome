@@ -1,47 +1,47 @@
 {
   "schema": "brassi_training_summary_v1",
-  "total_optimizer_steps": 4875,
+  "total_optimizer_steps": 8932,
   "total_unique_tokens_covered": 0,
-  "mlm_loss_recent_50step_avg": 1.4005512110196126,
-  "mlm_loss_min": 1.1198949855883351,
+  "mlm_loss_recent_50step_avg": 1.0994468584487422,
+  "mlm_loss_min": 0.7596978716302136,
   "contexts": {
     "4096": {
-      "steps": 487,
-      "recent_5step_avg": 1.3791951895019001,
+      "steps": 893,
+      "recent_5step_avg": 1.0836608952989277,
       "range": [
-        1.181940830491653,
+        1.0220598019942657,
         841.0928338762214
       ]
     },
     "8192": {
-      "steps": 975,
-      "recent_5step_avg": 1.3068788458604557,
+      "steps": 1786,
+      "recent_5step_avg": 1.1226705130568553,
       "range": [
-        1.1718662594080553,
+        0.9895100977674939,
         840.7571196094385
       ]
     },
     "16384": {
-      "steps": 1024,
-      "recent_5step_avg": 1.3650360457760644,
+      "steps": 1876,
+      "recent_5step_avg": 1.1080086733158734,
       "range": [
-        1.161410392510849,
+        0.9736692316331028,
         841.3396392731217
       ]
     },
     "32768": {
-      "steps": 1316,
-      "recent_5step_avg": 1.4798403590200069,
+      "steps": 2412,
+      "recent_5step_avg": 1.0753263023482535,
       "range": [
-        1.1209056565785012,
+        0.8771385692183791,
         843.8856561546287
       ]
     },
     "65536": {
-      "steps": 1073,
-      "recent_5step_avg": 1.4230869839352323,
+      "steps": 1965,
+      "recent_5step_avg": 1.1002288779035267,
       "range": [
-        1.1198949855883351,
+        0.7596978716302136,
         840.6879620210241
       ]
     }
@@ -51,8 +51,8 @@
     1000,
     1500
   ],
-  "gradient_norm_recent_avg": 510.32,
-  "last_step": 4875,
+  "gradient_norm_recent_avg": 20.769375,
+  "last_step": 8932,
   "distributed_mode": "fsdp",
   "checkpoint_group_size": 6,
   "gradient_accumulation": 4,
