@@ -1,45 +1,45 @@
 {
   "schema": "brassi_training_summary_v1",
-  "total_optimizer_steps": 8932,
+  "total_optimizer_steps": 8994,
   "total_unique_tokens_covered": 0,
-  "mlm_loss_recent_50step_avg": 1.0994468584487422,
+  "mlm_loss_recent_50step_avg": 1.0720221312193106,
   "mlm_loss_min": 0.7596978716302136,
   "contexts": {
     "4096": {
-      "steps": 893,
-      "recent_5step_avg": 1.0836608952989277,
+      "steps": 924,
+      "recent_5step_avg": 1.0890773976146852,
       "range": [
         1.0220598019942657,
         841.0928338762214
       ]
     },
     "8192": {
-      "steps": 1786,
-      "recent_5step_avg": 1.1226705130568553,
+      "steps": 1848,
+      "recent_5step_avg": 1.0685538001974844,
       "range": [
         0.9895100977674939,
         840.7571196094385
       ]
     },
     "16384": {
-      "steps": 1876,
-      "recent_5step_avg": 1.1080086733158734,
+      "steps": 1941,
+      "recent_5step_avg": 1.051916666136934,
       "range": [
-        0.9736692316331028,
+        0.9699336880424464,
         841.3396392731217
       ]
     },
     "32768": {
-      "steps": 2412,
-      "recent_5step_avg": 1.0753263023482535,
+      "steps": 2495,
+      "recent_5step_avg": 1.0687343299635468,
       "range": [
         0.8771385692183791,
         843.8856561546287
       ]
     },
     "65536": {
-      "steps": 1965,
-      "recent_5step_avg": 1.1002288779035267,
+      "steps": 2033,
+      "recent_5step_avg": 1.0985564889581212,
       "range": [
         0.7596978716302136,
         840.6879620210241
@@ -51,8 +51,8 @@
     1000,
     1500
   ],
-  "gradient_norm_recent_avg": 20.769375,
-  "last_step": 8932,
+  "gradient_norm_recent_avg": 15.5,
+  "last_step": 8994,
   "distributed_mode": "fsdp",
   "checkpoint_group_size": 6,
   "gradient_accumulation": 4,

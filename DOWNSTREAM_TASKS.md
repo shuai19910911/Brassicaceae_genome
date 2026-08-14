@@ -278,6 +278,68 @@ MMED、最低独立单位数、bootstrap层级和Holm family在task registry中�
 - **指标**：AUPRC、matched accuracy、top-1% recall、Spearman。
 - **基线**：GPN、GPN-MSA、PlantCAD2-M/L、PlantCaduceus、AgroNT、AlphaGenome/Evo 2、phyloP/phastCons。
 
+### P8. 单碱基表观修饰位点分类（4mC/5mC/6mA）
+
+- **来源**：Nature Communications DNA-FM基准 [10.1038/s41467-025-65823-8](https://doi.org/10.1038/s41467-025-65823-8) 第3/4类的植物对应实例。
+- **数据集**：A.thaliana 4mC、G.pickeringii 4mC、G.subterraneus 4mC（i4mC-Deep/MethSMRT来源）；拟南芥5mC（亚硫酸氢盐验证位点）；植物6mA仅在取得可靠实验证据时进入，否则标记INFEASIBLE。
+- **输入**：位点中心41 bp窗口（与NC基准一致的局部信号长度）；另报4K原生长度结果。
+- **split**：染色体+site cluster；同基因同源位点不跨split；负例为同GC、同二核苷酸背景的callable胞嘧啶。
+- **指标**：AUPRC、MCC、macro-F1；跨物种外测（拟南芥训练→Geum外测等）。
+- **基线**：k-mer/CNN、i4mC-Deep式专家、AgroNT、PlantCAD2、DNABERT-2、NT-v2。
+- **目的**：证明单碱基分辨率能力（与P4互补），并直接对表NC基准。
+
+### P9. 开放染色质区域分类
+
+- **来源**：NC基准DNase-I Hypersensitive任务的植物对应实例。
+- **数据集**：拟南芥DNase-seq峰（Zhang et al. 2012等）；Brassica ATAC-seq峰（有public数据时）。
+- **输入**：峰中心1-2 kb窗口；负例为同GC、同repeat、同染色质可测背景。
+- **split**：染色体block + tissue/study；同peak同源窗口成组。
+- **指标**：AUPRC、MCC、macro-F1。
+- **基线**：k-mer/CNN、AgroNT、PlantCAD2、DNABERT-2、NT-v2。
+
+### P10. 多物种基因组区域分类
+
+- **来源**：NC基准第2类（human vs worm）的植物对应实例，扩展为科内与科间两层。
+- **数据集**：
+  - P10a 十字花科内属/种：Arabidopsis、Brassica、Raphanus、Camelina、Capsella、Eutrema、Sinapis、Cardamine（plantDB本地构建，每物种等量窗口）；
+  - P10b 十字花科 vs 外群：Solanum、Glycine、Oryza、Zea等非十字花科植物；
+  - P10c U三角亚基因组A/B/C：与B1标签体系联动，但不输入任何坐标/名称特征。
+- **输入**：1-4K bp随机基因组窗口，GC/重复匹配。
+- **split**：整assembly/整种留出，同一近重复区域不跨split；报告label-transfer与true-holdout。
+- **指标**：macro-F1、AUPRC（one-vs-rest）、准确率。
+- **目的**：验证模型学到的是植物/十字花科真实特征，而不是表面GC/重复捷径；公共模型可重跑同数据。
+
+### P11. 增强子与增强子强度
+
+- **来源**：NC基准enhancer/enhancer_strength的植物对应实例。
+- **数据集**：拟南芥STARR-seq增强子（Jores et al. 2020等）；增强子强度按STARR活性分位定义分类/回归两轨。
+- **输入**：增强子中心1-4K窗口；负例来自同批次STARR低活性同GC背景。
+- **split**：染色体block；同源增强子不跨split。
+- **指标**：AUPRC、macro-F1（分类）；Spearman/R²（强度回归）。
+- **基线**：k-mer/CNN、AgroNT、PlantCAD2、DNABERT-2、NT-v2。
+
+### P12. TAD边界识别
+
+- **来源**：NC基准TAD任务的植物对应实例。
+- **数据集**：拟南芥Hi-C TAD边界（Liu et al. 2017等）；Brassica Hi-C有public数据时加入。
+- **输入**：边界中心2.4K bp（NC同长度）与32K/64K长上下文两轨。
+- **split**：染色体block；相邻边界同组。
+- **指标**：AUPRC、边界F1（±N bp）；距离分层报告。
+- **基线**：k-mer/CNN、insulation-score专家规则、PlantCAD2、DNABERT-2、NT-v2。
+- **边界**：植物TAD数据分辨率有限，结果仅作为能力证据，不作为核心主张。
+
+### P13. 核心启动子与启动子强度
+
+- **来源**：NC基准promoter套件（8数据集）的植物部分 + 本地重建。
+- **数据集**：
+  - P13a iPro-WAEL拟南芥TATA/NonTATA启动子（NC基准HF zip直接提取）；
+  - P13b 核心启动子70 bp（本地GFF构建：TSS±35，TATAWAW基序分TATA/NonTATA）；
+  - P13c 启动子300 bp（本地GFF构建：TSS-250..+50，含增强子背景负例）；
+  - P13d 启动子强度回归（STARR-seq/CAGE活性，有数据时）。
+- **split**：orthogroup + assembly cluster；同基因不跨split。
+- **指标**：AUPRC、MCC、macro-F1；强度用Spearman/R²。
+- **基线**：k-mer/PWM（TATA-box）、CNN、AgroNT、PlantCAD2、DNABERT-2、NT-v2。
+
 ## 6. 十字花科专属核心任务
 
 以下任务是论文最大亮点。主文至少要完整完成其中预注册的核心组合，而不是只挑结果好的任务。
@@ -470,3 +532,56 @@ MMED、最低独立单位数、bootstrap层级和Holm family在task registry中�
 - **Source Data**：每个独立生物单位的预测、标签、split、seed和模型版本，不只给汇总均值。
 
 图表必须同时说明：任务输入、独立单位、split、横纵轴、指标方向、可支持结论和不能支持的结论。所有结果表只纳入真实运行产物，不提前填入占位分数或复制论文分数。
+
+## 10. 任务执行状态与启动清单（2026-08-14 更新）
+
+任务体系已从 26 项扩展为 **32 项**（20 核心 P1–P13 + B1–B12 结构不变 + 6 多组学扩展 X1–X6；新增 P8/P9/P10/P11/P12/P13 六个公共任务家族，对齐 Nature Communications《Benchmarking DNA foundation models for genomic and genetic tasks》10.1038/s41467-025-65823-8 的四大类 57 数据集，取其植物可执行部分并在本地重建同构任务）。
+
+### 10.1 已就绪（数据 release 冻结后即可直接评测）
+
+| 数据集 release | 任务 | 窗口 | 规模（每 split/类） | 来源 |
+|---|---|---|---|---|
+| p1_coding_intergenic_v1 | P1 | 2048 bp | 4000 正 + 4000 负 | plantDB 本地 GFF 派生 |
+| p3_splice_donor_v1 | P3 | 600 bp | 3000 + 3000 | plantDB 本地 GFF 派生 |
+| p3_splice_acceptor_v1 | P3 | 600 bp | 3000 + 3000 | plantDB 本地 GFF 派生 |
+| p4_region_type_v1 | P4 | 400 bp | 4 类 × 2000 | plantDB 本地 GFF 派生 |
+| p10a_species_v1 | P10a | 2000 bp | 4 物种 × 2000 | plantDB 本地（4 物种 × 全部 split） |
+| p10b_species_v1 | P10b | 2000 bp | 2 类 × 3000 | plantDB 本地（十字花科 vs 番茄/水稻/玉米/黄瓜） |
+| p13_core_promoter_v1 | P13b | 70 bp | 4000（TATA/NonTATA 按基序标注） | plantDB 本地 GFF 派生 |
+| p13_promoter300_v1 | P13c | 300 bp | 3000 + 3000 | plantDB 本地 GFF 派生 |
+| p8_4mc_athaliana_v1 | P8 | 41 bp | NC 基准 test 保留 | NC 基准 HF zip |
+| p8_4mc_geum_pickeringii_v1 | P8 | 41 bp | NC 基准 test 保留 | NC 基准 HF zip |
+| p8_4mc_geum_subterraneus_v1 | P8 | 41 bp | NC 基准 test 保留 | NC 基准 HF zip |
+| p13a_iprowael_tata_nontata_v1 | P13a | 700 bp | NC 基准 test 保留 | NC 基准 HF zip（iPro-WAEL） |
+
+以上 release 的 split 均为整 assembly 或序列级留出，经 `validate_splits` 泄漏审计（重复样本、RC 近重复、生物组跨界、坐标重叠）后冻结；每个 release 目录含 manifest.json + receipt.json + samples.jsonl，目录只读。
+
+### 10.2 需要外部实验数据（来源已核实，待获取）
+
+P5（表达，SRA）、P6（长程调控，PlantCAD2 数据）、P7（变异效应，gpn-brassicales 配套 VCF）、P9（DNase/ATAC，GSE53322/PlantDHS）、P11（STARR-seq，GSE144826）、P12（TAD，GSE96418）、B1–B12（逐任务论文补充材料）。详见 `DOWNSTREAM_DATA_ACQUISITION.md`。
+
+### 10.3 公共基线模型权重
+
+已缓存（本地 + 逐文件 sha256 回执）：AgroNT 1B、DNABERT-2 117M、NT-v2 500M multi-species、HyenaDNA medium 160K、GPN-Brassicales。PlantCAD2/PlantCaduceus 权重公开链接待核实；Evo 2 推迟到 GPU 长程阶段。
+
+### 10.4 启动协议（等用户指定执行卡）
+
+1. 用户指定 GPU 卡 → 在指定卡上运行编码与评测（下游 runner 的 brassi_frozen + 公共模型编码全部 GPU 化）；
+2. 任何 CPU 残留步骤（数据解压、格式转换、统计）继续提交 q03；
+3. 训练中的正式 checkpoint（每 500 步永久保存）与下游评测并行互不影响；
+4. 下游评测顺序：先 12 个已冻结 release 的公共任务（P1/P3/P4/P8/P10/P13 家族），再补外部数据任务，最后 B 系列确认性任务。
+
+### 10.5 与 NC 基准论文的对应关系
+
+| NC 基准类别 | NC 数据集数 | 本项目对应 |
+|---|---|---|
+| 人类区域分类 | 约 25 | 不执行（非植物，超出项目边界；文档注明） |
+| 多物种区域分类 | 8 | P10a/P10b 植物版 + P1 coding/intergenic |
+| 人类表观分类 | 6 | P8 植物 4mC/5mC 对应版 |
+| 多物种表观分类 | 6 | P8（A.thaliana + 2 Geum 4mC）+ P9（DNase，数据待获取） |
+| 剪接位点 | 3 | P3 donor/acceptor |
+| 启动子 | 8 | P13a（iPro-WAEL 复现）+ P13b/P13c（本地重建） |
+| 增强子 | 2 | P11（STARR-seq，数据待获取） |
+| 表达预测 | GTEx 人 | P5 植物对应版（数据待获取） |
+| 变异效应 | 致病/因果 QTL | P7 植物对应版（数据待获取） |
+| TAD | 1 | P12 植物对应版（数据待获取） |
