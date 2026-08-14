@@ -33,17 +33,16 @@
 
 | 模型 | 仓库 | 状态 |
 |------|------|------|
-| AgroNT 1B | InstaDeepAI/agro-nucleotide-transformer-1b | ACQUIRING |
-| DNABERT-2 117M | zhihan1996/DNABERT-2-117M | ACQUIRING |
-| NT v2 500M multi-species | InstaDeepAI/nucleotide-transformer-v2-500m-multi-species | ACQUIRING |
-| HyenaDNA medium 160K | LongSafari/hyenadna-medium-160k-seqlen-hf | ACQUIRING |
-| GPN-Brassicales | songlab/gpn-brassicales | ACQUIRING |
-| PlantCaduceus | PNAS 10.1073/pnas.2421738122；权重链接待核实 | BLOCKED_PENDING_WEIGHTS |
-| GPN-Arabidopsis | songlab/gpn-arabidopsis 已弃用，由 gpn-brassicales 替代 | REPLACED |
-| Evo 2 | 开源权重 ~40GB，仅在长程任务获批 GPU 后下载 | DEFERRED_TO_GPU_PHASE |
-
-下载缓存的本地目录：workspace/release/public_model_checkpoints/<model>/
-每个模型带 RECEIPT.json（逐文件 sha256 + HF repo 快照）。
+| AgroNT 1B | InstaDeepAI/agro-nucleotide-transformer-1b | READY（down_model/AgroNT_1B） |
+| DNABERT-2 117M | zhihan1996/DNABERT-2-117M | READY（down_model/DNABERT2） |
+| NT v2 500M multi-species | InstaDeepAI/nucleotide-transformer-v2-500m-multi-species | READY（down_model/NTv2_500M_multi_species） |
+| HyenaDNA medium 160K | LongSafari/hyenadna-medium-160k-seqlen-hf | READY（down_model/HyenaDNA_medium_160k） |
+| GPN-Brassicales | songlab/gpn-brassicales | READY（down_model/GPN_Brassicales） |
+| PlantCAD2-M/L | kuleshov-group | READY（down_model/PlantCAD2_Small、PlantCAD2_Large） |
+| PlantCaduceus | PNAS 10.1073/pnas.2421738122 | READY（down_model/PlantCaduceus_l32） |
+| Caduceus-PS | 植物噬菌体基准 | READY（down_model/Caduceus_Ph_131k_d_model256） |
+| Evo 2 1B | Arc Institute | READY（down_model/Evo2_1B_base） |
+| 其他备用基线 | — | READY（GENA_LM_BERT_base、PlantBiMoE、PlantDNAMamba_BPE、PlantNT_singlebase） |
 
 ## 数据获取的下一步（等用户确认执行）
 
