@@ -45,7 +45,7 @@
 
 ## 训练进度（更新至 step 18991）
 
-![训练曲线 step 18991](brassicaceae_genomefm_v1_training_curves_step18991.png)
+![训练曲线 step 18991](docs/brassicaceae_genomefm_v1_training_curves_step18991.png)
 
 ### 白话解读
 
