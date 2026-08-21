@@ -1,61 +1,38 @@
 {
-  "schema": "brassi_training_summary_v1",
-  "total_optimizer_steps": 18991,
-  "total_unique_tokens_covered": 0,
-  "mlm_loss_recent_50step_avg": 1.2498726840249657,
-  "mlm_loss_min": 0.7220689878984401,
+  "checkpoint_count": 59,
+  "checkpoint_group_size": 6,
   "contexts": {
-    "4096": {
-      "steps": 1948,
-      "recent_5step_avg": 1.2468652184700733,
-      "range": [
-        0.9436976197747015,
-        841.0928338762214
-      ]
-    },
-    "8192": {
-      "steps": 3897,
-      "recent_5step_avg": 1.2457007412021968,
-      "range": [
-        0.9154895340681788,
-        840.7571196094385
-      ]
-    },
     "16384": {
-      "steps": 4092,
-      "recent_5step_avg": 1.2663307365829266,
-      "range": [
-        0.9021126540463114,
-        841.3396392731217
-      ]
+      "minimum": 0.9021126540463114,
+      "recent_50step_avg": 1.2430766588869584,
+      "recent_5step_avg": 1.2338109934397885,
+      "steps": 6378
     },
     "32768": {
-      "steps": 5261,
-      "recent_5step_avg": 1.238541428238386,
-      "range": [
-        0.7988428280773143,
-        843.8856561546287
-      ]
+      "minimum": 0.7988428280773143,
+      "recent_50step_avg": 1.2616672229993218,
+      "recent_5step_avg": 1.2488882884028485,
+      "steps": 8199
+    },
+    "4096": {
+      "minimum": 0.9436976197747015,
+      "recent_50step_avg": 1.2520019451725366,
+      "recent_5step_avg": 1.2155516517796552,
+      "steps": 3036
     },
     "65536": {
-      "steps": 4287,
-      "recent_5step_avg": 1.2973123569430316,
-      "range": [
-        0.7220689878984401,
-        840.6879620210241
-      ]
+      "minimum": 0.7220689878984401,
+      "recent_50step_avg": 1.2382072815996947,
+      "recent_5step_avg": 1.1794026046965074,
+      "steps": 6681
+    },
+    "8192": {
+      "minimum": 0.9154895340681788,
+      "recent_50step_avg": 1.2501533576586656,
+      "recent_5step_avg": 1.2240964346860592,
+      "steps": 6074
     }
   },
-  "checkpoints": [
-    500,
-    1000,
-    1500
-  ],
-  "gradient_norm_recent_avg": 20.7275,
-  "last_step": 18991,
-  "distributed_mode": "fsdp",
-  "checkpoint_group_size": 6,
-  "gradient_accumulation": 4,
   "contexts_trained": [
     4096,
     8192,
@@ -63,12 +40,97 @@
     32768,
     65536
   ],
+  "controlled_reuse_tokens": 0,
+  "corpus_tokens": 114200000000,
+  "corpus_unique_coverage_fraction": 0.20572565295971978,
+  "coverage_cycle": 0,
+  "current_wsd_round_human": 3,
+  "current_wsd_round_zero_based": 2,
+  "development": {
+    "best_mlm": 1.2207758518742697,
+    "best_step": 11000,
+    "evaluations": 59,
+    "latest_mlm": 1.291356662042294,
+    "latest_step": 29500,
+    "recent": [
+      {
+        "frame": 0.2823734305201337,
+        "mlm": 1.2420878088230993,
+        "region": 0.26256710077144846,
+        "step": 26000
+      },
+      {
+        "frame": 0.28225341765935874,
+        "mlm": 1.2401401468863478,
+        "region": 0.25807135217831234,
+        "step": 26500
+      },
+      {
+        "frame": 0.2812815888452826,
+        "mlm": 1.2396233135628338,
+        "region": 0.2576388386987549,
+        "step": 27000
+      },
+      {
+        "frame": 0.2801955327865606,
+        "mlm": 1.2393646143240822,
+        "region": 0.25542053446964896,
+        "step": 27500
+      },
+      {
+        "frame": 0.2788858796809657,
+        "mlm": 1.239334661162632,
+        "region": 0.2557958415095124,
+        "step": 28000
+      },
+      {
+        "frame": 0.2806301346569668,
+        "mlm": 1.2390568879767303,
+        "region": 0.25912979506914524,
+        "step": 28500
+      },
+      {
+        "frame": 0.31817541097056773,
+        "mlm": 1.2899331804309215,
+        "region": 0.29685829287321,
+        "step": 29000
+      },
+      {
+        "frame": 0.3129579299696648,
+        "mlm": 1.291356662042294,
+        "region": 0.29419854922736344,
+        "step": 29500
+      }
+    ]
+  },
+  "distributed_mode": "fsdp_full_shard",
+  "figure_files": [
+    "brassicaceae_genomefm_v1_training_curves_step29874.png",
+    "brassicaceae_genomefm_v1_training_curves_step29874.pdf"
+  ],
+  "gradient_accumulation": 4,
+  "gradient_norm_recent_50step_avg": 17.14,
+  "last_step": 29874,
+  "latest_checkpoint": "step_000000029500",
+  "learning_rate": 0.0003,
+  "mlm_loss_min": 0.7220689878984401,
+  "mlm_loss_recent_50step_avg": 1.2105848923019205,
   "per_rank_microbatch": {
-    "4096": 16,
-    "8192": 8,
     "16384": 4,
     "32768": 2,
-    "65536": 1
+    "4096": 16,
+    "65536": 1,
+    "8192": 8
   },
-  "tokens_per_step": 786432
+  "processed_forward_tokens": 26126745600,
+  "schema": "brassi_training_summary_v1",
+  "snapshot_step": 29874,
+  "tokens_per_step": 786432,
+  "total_optimizer_steps": 29874,
+  "total_unique_tokens_covered": 23493869568,
+  "world_size": 3,
+  "wsd_round_start_steps": [
+    13000,
+    28500
+  ]
 }
