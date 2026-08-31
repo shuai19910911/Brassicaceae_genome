@@ -5,14 +5,14 @@
 | 项目 | 状态 |
 |------|------|
 | 模型 | BrassiCaduceus ~330M（Bi-Mamba2 + tied embedding） |
-| 训练 | **已按新策略重启** — 从 step 41,500 分支，旧高学习率运行停在 step 44,307 |
-| 上下文 | 4K / 8K / 16K / 32K / 64K（128K 因 40GB 显存上限未纳入 v1） |
-| 新学习率 | 已在step 53,000降至最终1e-5；此后保持1e-5，禁自动重启 |
-| 开发集 MLM | 最新1.229（step 56,500）；1e-5阶段8点均值1.22866，全程最佳1.221（step 11,000） |
-| 活跃语料覆盖 | 444.3 亿 / 1142 亿唯一 tokens（38.9%）；cycle 0、无受控复用 |
-| Checkpoint | 新 lineage 已保存30个永久 checkpoint，最新 step 56,500；父 checkpoint step 41,500保留 |
-| GPU | gpu10 的 GPU 0/1/2，均为 A100 40GB，当前 100% 利用率 |
-| CPU Gate | 323/323 tests PASSED；新 lineage 专属 Gate 已通过 |
+| 训练 | **已直接切换为恒定2e-5** — 从step 56,500建立第三条lineage |
+| 上下文 | 4K / 8K / 16K / 32K / 64K（128K 因40GB显存上限未纳入v1） |
+| 新学习率 | 每一步恒定2e-5；无warmup、无衰减、无自动重启、无开发集变差回退 |
+| 开发集 MLM | 新lineage尚未到首次评估；父checkpoint为1.22875（step 56,500），全程最佳1.22078（step 11,000） |
+| 活跃语料覆盖 | 444.5亿 / 1142亿唯一tokens（38.9%）；cycle 0、无受控复用 |
+| Checkpoint | 父checkpoint step 56,500；恒定2e-5新lineage首个永久checkpoint将在step 57,000保存 |
+| GPU | gpu10的GPU 0/1/2，均为A100 40GB，当前100%利用率 |
+| CPU Gate | 328/328 tests PASSED；恒定2e-5新lineage专属Gate已通过 |
 | 下游任务 | 32 项任务体系，12 个数据 release 已冻结（521,204 样本） |
 | 公共基线 | 14 个公共 DNA-FM 权重就位于 `~/myhermes/down_model` |
 
@@ -39,36 +39,37 @@
 
 ## 产物路径
 
-- 活跃训练日志：`workspace/formal_runs/brassicaceae_330m_low_lr_from_step41500_v1/training.jsonl`
-- 活跃 checkpoint：`workspace/formal_runs/brassicaceae_330m_low_lr_from_step41500_v1/checkpoints/step_NNN/`
-- 父 checkpoint：`workspace/formal_runs/brassicaceae_330m_formal_v1/checkpoints/step_000000041500/`
+- 活跃训练日志：`workspace/formal_runs/brassicaceae_330m_constant2e5_from_step56500_v1/training.jsonl`
+- 活跃checkpoint：`workspace/formal_runs/brassicaceae_330m_constant2e5_from_step56500_v1/checkpoints/step_NNN/`
+- 父checkpoint：`workspace/formal_runs/brassicaceae_330m_low_lr_from_step41500_v1/checkpoints/step_000000056500/`
+- 上一分支checkpoint：`workspace/formal_runs/brassicaceae_330m_formal_v1/checkpoints/step_000000041500/`
 - 训练曲线：`docs/brassicaceae_genomefm_v1_training_curves_step*.png/pdf`（最新随提交更新）
 
-## 训练进度（低学习率分支快照至 step 56,506）
+## 训练进度（恒定2e-5分支快照至step 56,528）
 
-![训练曲线 step 56506](docs/brassicaceae_genomefm_v1_training_curves_step56506.png)
+![训练曲线 step 56528](docs/brassicaceae_genomefm_v1_training_curves_step56528.png)
 
 ### 白话解读
 
 **A. 全部上下文的训练 MLM（左上）**
-横轴是优化器步数，纵轴是MLM loss。当前有效lineage已从step 41,500连续训练15,006步；最近50步均值1.104，五档训练曲线在1.10附近进入平台。训练仍稳定，但下降幅度已经很小。
+当前曲线由三段有效lineage拼接：原始训练到step 41,500、单向低学习率分支到step 56,500、恒定2e-5分支从step 56,501开始。新分支目前有28步，训练MLM连续且没有异常跳变，但样本仍太少，暂不能判断提升效果。
 
 **B. 五档上下文（右上）**
-五档最近50点均值分别为4K 1.103、8K 1.103、16K 1.098、32K 1.097、64K 1.101，差距约0.006；32K/16K略低，长上下文仍然稳定，没有出现长度退化。
+紫色恒定2e-5分支线之后，4K–64K均已出现连续训练点，没有某一长度单独发散；但新分支每档点数仍很少，图例中的最近均值主要反映step 56,500之前的低学习率阶段。
 
 **C. 多轮 WSD 学习率（左下）**
-绿色分支从step 41,500启动，学习率先升到8e-5，再单向余弦衰减；step 53,000已到最终1e-5，之后3,500余步始终保持1e-5且不会重启。调度策略已经完整走完。
+绿色线是step 41,500的单向低学习率分支；紫色线是step 56,500的新恒定2e-5分支。新lineage从父checkpoint的1e-5直接切到2e-5，从step 56,501开始每一步都严格保持2e-5；没有warmup、衰减、自动重启或开发集触发回退。
 
 **D. 开发集（右下）**
-低学习率分支已完成30次固定开发集评估。step 53,000进入1e-5后8个点的均值为1.22866、标准差仅0.000063，范围1.22856–1.22875；最新step 56,500为1.22875。曲线已经高度平台化，仍未超过全程最佳step 11,000的1.22078。
+紫色分支当前尚未到step 57,000，因此还没有恒定2e-5下的新开发集点。图中最新1.22875仍是父lineage的step 56,500结果；必须等step 57,000及后续固定评估后，才能判断把学习率提高一倍是否真正改善泛化。
 
 ### 当前判断
 
-- **运行层面健康**：低学习率分支已连续完成15,006个优化器步，3个FSDP rank和三张A100保持满载，无失败标记。
-- **策略调整已完成目标**：高学习率重启尖峰被消除，开发集在1.2286附近稳定收敛，五档上下文无退化。
-- **继续/停止判断**：学习率已到最终值且开发集连续8点无实质改善，边际收益基本耗尽。从科学和算力性价比看，step 56,500已是合适停止点；在未收到停止指令前训练仍继续运行。
+- **恢复闭环**：step 56,500模型、812项优化器状态、sampler/token账本和3份rank RNG完整迁移到新lineage。
+- **运行层面健康**：已连续验证至少10个新优化器步，每一步学习率均为2e-5；3个rank绑定正确GPU UUID，三卡100%，无失败标记。
+- **科学判断待定**：当前只证明了恒定2e-5执行正确，尚无新开发集结果；按用户要求不会因开发集变差自动降回1e-5。
 
-- CPU Gate：`workspace/release/formal_cpu_gate_low_lr_from_step41500_v1/`
+- CPU Gate：`workspace/release/formal_cpu_gate_constant2e5_from_step56500_v1/`
 
 ## 启动命令
 
@@ -76,10 +77,10 @@
 cd /home/user/zhangzhishuai/myhermes/Brassicaceae_genomemodel
 CUDA_VISIBLE_DEVICES=0,1,2 PYTHONPATH=workspace/code \
 python workspace/code/formal_launcher.py \
-  --run-contract workspace/config/formal_run_low_lr_from_step41500_v1.json \
+  --run-contract workspace/config/formal_run_constant2e5_from_step56500_v1.json \
   --checkpoint-group-size 6 \
   --distributed-mode fsdp \
-  --resume workspace/formal_runs/brassicaceae_330m_formal_v1/checkpoints/step_000000041500 \
+  --resume workspace/formal_runs/brassicaceae_330m_low_lr_from_step41500_v1/checkpoints/step_000000056500 \
   --authorize-gpu-launch I_AUTHORIZE_3XA100_FORMAL_TRAINING
 ```
 
