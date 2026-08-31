@@ -1,38 +1,38 @@
 {
   "active_run_id": "brassicaceae_330m_low_lr_from_step41500_v1",
   "automatic_restart": false,
-  "checkpoint_count": 5,
+  "checkpoint_count": 30,
   "checkpoint_group_size": 6,
   "contexts": {
     "16384": {
       "minimum": 0.9021126540463114,
-      "recent_50step_avg": 1.1027315060089722,
-      "recent_5step_avg": 1.105268523911323,
-      "steps": 9423
+      "recent_50step_avg": 1.0972100119174941,
+      "recent_5step_avg": 1.1048238929643002,
+      "steps": 11970
     },
     "32768": {
       "minimum": 0.7988428280773143,
-      "recent_50step_avg": 1.108544614599156,
-      "recent_5step_avg": 1.1106659238823697,
-      "steps": 12114
+      "recent_50step_avg": 1.0961144747160054,
+      "recent_5step_avg": 1.0939863486563242,
+      "steps": 15390
     },
     "4096": {
       "minimum": 0.9436976197747015,
-      "recent_50step_avg": 1.1096965542318984,
-      "recent_5step_avg": 1.1123427267830484,
-      "steps": 4486
+      "recent_50step_avg": 1.1035798742768559,
+      "recent_5step_avg": 1.1058986469148684,
+      "steps": 5700
     },
     "65536": {
       "minimum": 0.7220689878984401,
-      "recent_50step_avg": 1.10656897067862,
-      "recent_5step_avg": 1.106130997795863,
-      "steps": 9871
+      "recent_50step_avg": 1.1026813141107155,
+      "recent_5step_avg": 1.0945395949898271,
+      "steps": 12540
     },
     "8192": {
       "minimum": 0.9154895340681788,
-      "recent_50step_avg": 1.1071377421938569,
-      "recent_5step_avg": 1.116622738570484,
-      "steps": 8974
+      "recent_50step_avg": 1.101164000521257,
+      "recent_5step_avg": 1.0934128780173582,
+      "steps": 11400
     }
   },
   "contexts_trained": [
@@ -44,78 +44,78 @@
   ],
   "controlled_reuse_tokens": 0,
   "corpus_tokens": 114200000000,
-  "corpus_unique_coverage_fraction": 0.30557910304728547,
+  "corpus_unique_coverage_fraction": 0.3891254517688266,
   "coverage_cycle": 0,
   "development": {
     "best_mlm": 1.2207758518742697,
     "best_step": 11000,
-    "evaluations": 88,
-    "latest_mlm": 1.2336175634035664,
-    "latest_step": 44000,
+    "evaluations": 113,
+    "latest_mlm": 1.2287480553404437,
+    "latest_step": 56500,
     "recent": [
       {
-        "frame": 0.2737161996261564,
-        "mlm": 1.2309352012802999,
-        "region": 0.25422421137411294,
-        "step": 40500
+        "frame": 0.26940783383561967,
+        "mlm": 1.2285847258374416,
+        "region": 0.24860823446014446,
+        "step": 53000
       },
       {
-        "frame": 0.2728409318171018,
-        "mlm": 1.2311078558241308,
-        "region": 0.2521791352985205,
-        "step": 41000
+        "frame": 0.2691804312765334,
+        "mlm": 1.2286159505953684,
+        "region": 0.24864621223446806,
+        "step": 53500
       },
       {
-        "frame": 0.27239262391490304,
-        "mlm": 1.230787272223515,
-        "region": 0.2512404113467875,
-        "step": 41500
+        "frame": 0.2690197025289887,
+        "mlm": 1.2286744440332948,
+        "region": 0.24850471215229375,
+        "step": 54000
       },
       {
-        "frame": 0.27427273258300594,
-        "mlm": 1.2324417605281477,
-        "region": 0.2650860404654036,
-        "step": 42000
+        "frame": 0.26902796327501266,
+        "mlm": 1.2286719008403415,
+        "region": 0.2480338341593667,
+        "step": 54500
       },
       {
-        "frame": 0.2745610852157521,
-        "mlm": 1.2381992667974715,
-        "region": 0.24978426149054303,
-        "step": 42500
+        "frame": 0.26939740735093776,
+        "mlm": 1.2286860296900823,
+        "region": 0.2480943665548568,
+        "step": 55000
       },
       {
-        "frame": 0.2765535029028323,
-        "mlm": 1.2364721562051717,
-        "region": 0.25699109720528135,
-        "step": 43000
+        "frame": 0.269193147256368,
+        "mlm": 1.22870849456117,
+        "region": 0.24724833621768472,
+        "step": 55500
       },
       {
-        "frame": 0.27074997302108417,
-        "mlm": 1.2321627157457695,
-        "region": 0.24587267449170733,
-        "step": 43500
+        "frame": 0.2696387015765587,
+        "mlm": 1.2285633912743332,
+        "region": 0.24836957006003674,
+        "step": 56000
       },
       {
-        "frame": 0.2794297894753517,
-        "mlm": 1.2336175634035664,
-        "region": 0.2553265414118933,
-        "step": 44000
+        "frame": 0.2694437541582182,
+        "mlm": 1.2287480553404437,
+        "region": 0.24842824610810577,
+        "step": 56500
       }
     ]
   },
   "distributed_mode": "fsdp_full_shard",
   "figure_files": [
-    "brassicaceae_genomefm_v1_training_curves_step44374.png",
-    "brassicaceae_genomefm_v1_training_curves_step44374.pdf"
+    "brassicaceae_genomefm_v1_training_curves_step56506.png",
+    "brassicaceae_genomefm_v1_training_curves_step56506.pdf"
   ],
   "gradient_accumulation": 4,
-  "gradient_norm_recent_50step_avg": 7.5303125,
-  "last_step": 44374,
-  "latest_checkpoint": "step_000000044000",
-  "learning_rate": 7.678961291952001e-05,
+  "gradient_norm_recent_50step_avg": 1.4794921875,
+  "last_step": 56506,
+  "latest_checkpoint": "step_000000056500",
+  "learning_rate": 1e-05,
   "learning_rate_strategy": "one_way_low_lr_cosine_continuation_v1",
   "mlm_loss_min": 0.7220689878984401,
-  "mlm_loss_recent_50step_avg": 1.1114950813026125,
+  "mlm_loss_recent_50step_avg": 1.1042369416664317,
   "parent_checkpoint_step": 41500,
   "parent_run_id": "brassicaceae_330m_formal_v1",
   "per_rank_microbatch": {
@@ -125,12 +125,12 @@
     "65536": 1,
     "8192": 8
   },
-  "processed_forward_tokens": 38810898432,
+  "processed_forward_tokens": 49419493376,
   "schema": "brassi_training_summary_v1",
-  "snapshot_step": 44374,
+  "snapshot_step": 56506,
   "tokens_per_step": 786432,
-  "total_optimizer_steps": 44374,
-  "total_unique_tokens_covered": 34897133568,
+  "total_optimizer_steps": 56506,
+  "total_unique_tokens_covered": 44438126592,
   "transition_steps": [
     13000,
     28500,
