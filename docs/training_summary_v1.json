@@ -1,38 +1,38 @@
 {
   "active_run_id": "brassicaceae_330m_constant2e5_from_step56500_v1",
   "automatic_restart": false,
-  "checkpoint_count": 0,
+  "checkpoint_count": 5,
   "checkpoint_group_size": 6,
   "contexts": {
     "16384": {
       "minimum": 0.9021126540463114,
-      "recent_50step_avg": 1.0966559675262542,
-      "recent_5step_avg": 1.0789120505746541,
-      "steps": 11975
+      "recent_50step_avg": 1.103641952983614,
+      "recent_5step_avg": 1.1049356401079808,
+      "steps": 12510
     },
     "32768": {
       "minimum": 0.7988428280773143,
-      "recent_50step_avg": 1.0962080286749745,
-      "recent_5step_avg": 1.1002245597024416,
-      "steps": 15395
+      "recent_50step_avg": 1.10346370591726,
+      "recent_5step_avg": 1.0801240489360802,
+      "steps": 16084
     },
     "4096": {
       "minimum": 0.9436976197747015,
-      "recent_50step_avg": 1.1027343113802932,
-      "recent_5step_avg": 1.1030440041607288,
-      "steps": 5702
+      "recent_50step_avg": 1.0990738070774804,
+      "recent_5step_avg": 1.0991706375967019,
+      "steps": 5957
     },
     "65536": {
       "minimum": 0.7220689878984401,
-      "recent_50step_avg": 1.1016473526513224,
-      "recent_5step_avg": 1.1171823472999323,
-      "steps": 12545
+      "recent_50step_avg": 1.0997741028350179,
+      "recent_5step_avg": 1.0960806364445574,
+      "steps": 13106
     },
     "8192": {
       "minimum": 0.9154895340681788,
-      "recent_50step_avg": 1.10236041671964,
-      "recent_5step_avg": 1.1085963721775833,
-      "steps": 11405
+      "recent_50step_avg": 1.1034041729450779,
+      "recent_5step_avg": 1.1052929713986641,
+      "steps": 11915
     }
   },
   "contexts_trained": [
@@ -44,45 +44,15 @@
   ],
   "controlled_reuse_tokens": 0,
   "corpus_tokens": 114200000000,
-  "corpus_unique_coverage_fraction": 0.3892769535551664,
+  "corpus_unique_coverage_fraction": 0.4068373878809107,
   "coverage_cycle": 0,
   "development": {
     "best_mlm": 1.2207758518742697,
     "best_step": 11000,
-    "evaluations": 113,
-    "latest_mlm": 1.2287480553404437,
-    "latest_step": 56500,
+    "evaluations": 118,
+    "latest_mlm": 1.2286323400610677,
+    "latest_step": 59000,
     "recent": [
-      {
-        "frame": 0.26940783383561967,
-        "mlm": 1.2285847258374416,
-        "region": 0.24860823446014446,
-        "step": 53000
-      },
-      {
-        "frame": 0.2691804312765334,
-        "mlm": 1.2286159505953684,
-        "region": 0.24864621223446806,
-        "step": 53500
-      },
-      {
-        "frame": 0.2690197025289887,
-        "mlm": 1.2286744440332948,
-        "region": 0.24850471215229375,
-        "step": 54000
-      },
-      {
-        "frame": 0.26902796327501266,
-        "mlm": 1.2286719008403415,
-        "region": 0.2480338341593667,
-        "step": 54500
-      },
-      {
-        "frame": 0.26939740735093776,
-        "mlm": 1.2286860296900823,
-        "region": 0.2480943665548568,
-        "step": 55000
-      },
       {
         "frame": 0.269193147256368,
         "mlm": 1.22870849456117,
@@ -100,23 +70,53 @@
         "mlm": 1.2287480553404437,
         "region": 0.24842824610810577,
         "step": 56500
+      },
+      {
+        "frame": 0.2691666014882461,
+        "mlm": 1.2290655305941167,
+        "region": 0.24629070846138004,
+        "step": 57000
+      },
+      {
+        "frame": 0.26927003097872576,
+        "mlm": 1.229014949312045,
+        "region": 0.24769568500704917,
+        "step": 57500
+      },
+      {
+        "frame": 0.269958395541598,
+        "mlm": 1.2288624990233432,
+        "region": 0.25003056785420097,
+        "step": 58000
+      },
+      {
+        "frame": 0.2691262259318369,
+        "mlm": 1.2288202537626187,
+        "region": 0.24821246118996326,
+        "step": 58500
+      },
+      {
+        "frame": 0.2692426498542643,
+        "mlm": 1.2286323400610677,
+        "region": 0.24940702075544924,
+        "step": 59000
       }
     ]
   },
   "distributed_mode": "fsdp_full_shard",
   "figure_files": [
-    "brassicaceae_genomefm_v1_training_curves_step56528.png",
-    "brassicaceae_genomefm_v1_training_curves_step56528.pdf"
+    "brassicaceae_genomefm_v1_training_curves_step59078.png",
+    "brassicaceae_genomefm_v1_training_curves_step59078.pdf"
   ],
   "gradient_accumulation": 4,
-  "gradient_norm_recent_50step_avg": 1.80203125,
-  "last_step": 56528,
-  "latest_checkpoint": null,
+  "gradient_norm_recent_50step_avg": 1.6596875,
+  "last_step": 59078,
+  "latest_checkpoint": "step_000000059000",
   "learning_rate": 2e-05,
   "learning_rate_strategy": "constant_lr_continuation_v1",
   "middle_run_id": "brassicaceae_330m_low_lr_from_step41500_v1",
   "mlm_loss_min": 0.7220689878984401,
-  "mlm_loss_recent_50step_avg": 1.0983651385930695,
+  "mlm_loss_recent_50step_avg": 1.0949420324461887,
   "parent_checkpoint_step": 56500,
   "parent_run_id": "brassicaceae_330m_formal_v1",
   "per_rank_microbatch": {
@@ -126,12 +126,12 @@
     "65536": 1,
     "8192": 8
   },
-  "processed_forward_tokens": 49438388224,
+  "processed_forward_tokens": 51668271104,
   "schema": "brassi_training_summary_v1",
-  "snapshot_step": 56528,
+  "snapshot_step": 59078,
   "tokens_per_step": 786432,
-  "total_optimizer_steps": 56528,
-  "total_unique_tokens_covered": 44455428096,
+  "total_optimizer_steps": 59078,
+  "total_unique_tokens_covered": 46460829696,
   "transition_steps": [
     13000,
     28500,
