@@ -1,38 +1,42 @@
 {
-  "active_run_id": "brassicaceae_330m_constant2e5_from_step56500_v1",
+  "abandoned_run_ids": [
+    "brassicaceae_330m_low_lr_from_step41500_v1",
+    "brassicaceae_330m_constant2e5_from_step56500_v1"
+  ],
+  "active_run_id": "brassicaceae_330m_constant2e5_from_step11000_v1",
   "automatic_restart": false,
-  "checkpoint_count": 11,
+  "checkpoint_count": 0,
   "checkpoint_group_size": 6,
   "contexts": {
     "16384": {
-      "minimum": 0.9021126540463114,
-      "recent_50step_avg": 1.098258904448412,
-      "recent_5step_avg": 1.0915589252947568,
-      "steps": 13133
+      "minimum": 0.908211070992677,
+      "recent_50step_avg": 1.0125932052958604,
+      "recent_5step_avg": 1.0071023370716683,
+      "steps": 2470
     },
     "32768": {
-      "minimum": 0.7988428280773143,
-      "recent_50step_avg": 1.098035276788742,
-      "recent_5step_avg": 1.0920650803238385,
-      "steps": 16885
+      "minimum": 0.8226212805188199,
+      "recent_50step_avg": 1.0149711805668957,
+      "recent_5step_avg": 0.9744764769558348,
+      "steps": 3175
     },
     "4096": {
-      "minimum": 0.9436976197747015,
-      "recent_50step_avg": 1.099713224741658,
-      "recent_5step_avg": 1.10697872397954,
-      "steps": 6253
+      "minimum": 0.9697532032522395,
+      "recent_50step_avg": 1.0161479369022515,
+      "recent_5step_avg": 1.017739414210946,
+      "steps": 1175
     },
     "65536": {
-      "minimum": 0.7220689878984401,
-      "recent_50step_avg": 1.091476818148101,
-      "recent_5step_avg": 1.0734628528738555,
-      "steps": 13758
+      "minimum": 0.7596978716302136,
+      "recent_50step_avg": 1.00284732509961,
+      "recent_5step_avg": 1.0204615971515767,
+      "steps": 2587
     },
     "8192": {
-      "minimum": 0.9154895340681788,
-      "recent_50step_avg": 1.1003035114466597,
-      "recent_5step_avg": 1.1141714528029225,
-      "steps": 12508
+      "minimum": 0.93855708189246,
+      "recent_50step_avg": 1.0139995509789,
+      "recent_5step_avg": 1.012076663996813,
+      "steps": 2352
     }
   },
   "contexts_trained": [
@@ -44,80 +48,79 @@
   ],
   "controlled_reuse_tokens": 0,
   "corpus_tokens": 114200000000,
-  "corpus_unique_coverage_fraction": 0.42725569681260944,
+  "corpus_unique_coverage_fraction": 0.0775758010507881,
   "coverage_cycle": 0,
   "development": {
     "best_mlm": 1.2207758518742697,
     "best_step": 11000,
-    "evaluations": 124,
-    "latest_mlm": 1.2285520881945406,
-    "latest_step": 62000,
+    "evaluations": 22,
+    "latest_mlm": 1.2207758518742697,
+    "latest_step": 11000,
     "recent": [
       {
-        "frame": 0.2691262259318369,
-        "mlm": 1.2288202537626187,
-        "region": 0.24821246118996326,
-        "step": 58500
+        "frame": 0.2889308230895957,
+        "mlm": 1.2388856463178735,
+        "region": 0.2800922579916994,
+        "step": 7500
       },
       {
-        "frame": 0.2692426498542643,
-        "mlm": 1.2286323400610677,
-        "region": 0.24940702075544924,
-        "step": 59000
+        "frame": 0.3047421384924281,
+        "mlm": 1.2730839619611805,
+        "region": 0.2764425242661735,
+        "step": 8000
       },
       {
-        "frame": 0.27041245812080217,
-        "mlm": 1.2285793568745402,
-        "region": 0.24902414909984477,
-        "step": 59500
+        "frame": 0.2933857475090293,
+        "mlm": 1.2803956417019782,
+        "region": 0.2700122296168103,
+        "step": 8500
       },
       {
-        "frame": 0.2691648688973197,
-        "mlm": 1.2288948540892495,
-        "region": 0.24813330344201465,
-        "step": 60000
+        "frame": 0.280479244550754,
+        "mlm": 1.2339559493548555,
+        "region": 0.2549811370350716,
+        "step": 9000
       },
       {
-        "frame": 0.2691446347104296,
-        "mlm": 1.2285800633170272,
-        "region": 0.2460174231818686,
-        "step": 60500
+        "frame": 0.3003371498186225,
+        "mlm": 1.227770904092379,
+        "region": 0.2792926672791788,
+        "step": 9500
       },
       {
-        "frame": 0.2697799696153054,
-        "mlm": 1.2285527946370278,
-        "region": 0.24984281378211728,
-        "step": 61000
+        "frame": 0.28776005571022367,
+        "mlm": 1.234902017133491,
+        "region": 0.2723101402111583,
+        "step": 10000
       },
       {
-        "frame": 0.26863512922158156,
-        "mlm": 1.228881149105001,
-        "region": 0.2455906179706311,
-        "step": 61500
+        "frame": 0.2632616531590578,
+        "mlm": 1.2330933830781876,
+        "region": 0.24440407163817957,
+        "step": 10500
       },
       {
-        "frame": 0.26905308584344506,
-        "mlm": 1.2285520881945406,
-        "region": 0.24865807738840134,
-        "step": 62000
+        "frame": 0.26309872773373144,
+        "mlm": 1.2207758518742697,
+        "region": 0.23864979684133825,
+        "step": 11000
       }
     ]
   },
   "distributed_mode": "fsdp_full_shard",
   "figure_files": [
-    "brassicaceae_genomefm_v1_training_curves_step62043.png",
-    "brassicaceae_genomefm_v1_training_curves_step62043.pdf"
+    "brassicaceae_genomefm_v1_training_curves_step11265.png",
+    "brassicaceae_genomefm_v1_training_curves_step11265.pdf"
   ],
   "gradient_accumulation": 4,
-  "gradient_norm_recent_50step_avg": 1.910859375,
-  "last_step": 62043,
-  "latest_checkpoint": "step_000000062000",
+  "gradient_norm_recent_50step_avg": 2.885859375,
+  "last_step": 11265,
+  "latest_checkpoint": null,
   "learning_rate": 2e-05,
-  "learning_rate_strategy": "constant_lr_continuation_v1",
-  "middle_run_id": "brassicaceae_330m_low_lr_from_step41500_v1",
-  "mlm_loss_min": 0.7220689878984401,
-  "mlm_loss_recent_50step_avg": 1.1009737206234738,
-  "parent_checkpoint_step": 56500,
+  "learning_rate_strategy": "constant_lr_from_legacy_wsd_v1",
+  "mlm_loss_min": 0.7596978716302136,
+  "mlm_loss_recent_50step_avg": 1.0090603428015887,
+  "parent_checkpoint_step": 11000,
   "parent_run_id": "brassicaceae_330m_formal_v1",
   "per_rank_microbatch": {
     "16384": 4,
@@ -126,17 +129,14 @@
     "65536": 1,
     "8192": 8
   },
-  "processed_forward_tokens": 54262579200,
+  "processed_forward_tokens": 9855029248,
   "schema": "brassi_training_summary_v1",
-  "snapshot_step": 62043,
+  "snapshot_step": 11265,
   "tokens_per_step": 786432,
-  "total_optimizer_steps": 62043,
-  "total_unique_tokens_covered": 48792600576,
+  "total_optimizer_steps": 11265,
+  "total_unique_tokens_covered": 8859156480,
   "transition_steps": [
-    13000,
-    28500,
-    41500,
-    56500
+    11000
   ],
   "world_size": 3
 }
