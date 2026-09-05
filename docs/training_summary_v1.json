@@ -5,38 +5,38 @@
   ],
   "active_run_id": "brassicaceae_330m_constant2e5_from_step11000_v1",
   "automatic_restart": false,
-  "checkpoint_count": 0,
+  "checkpoint_count": 6,
   "checkpoint_group_size": 6,
   "contexts": {
     "16384": {
-      "minimum": 0.908211070992677,
-      "recent_50step_avg": 1.0125932052958604,
-      "recent_5step_avg": 1.0071023370716683,
-      "steps": 2470
+      "minimum": 0.9048859379237862,
+      "recent_50step_avg": 1.012571414201247,
+      "recent_5step_avg": 1.0255802693585572,
+      "steps": 3066
     },
     "32768": {
-      "minimum": 0.8226212805188199,
-      "recent_50step_avg": 1.0149711805668957,
-      "recent_5step_avg": 0.9744764769558348,
-      "steps": 3175
+      "minimum": 0.7979036193413022,
+      "recent_50step_avg": 1.0113603706871488,
+      "recent_5step_avg": 0.981262438008647,
+      "steps": 3942
     },
     "4096": {
-      "minimum": 0.9697532032522395,
-      "recent_50step_avg": 1.0161479369022515,
-      "recent_5step_avg": 1.017739414210946,
-      "steps": 1175
+      "minimum": 0.9425901729819829,
+      "recent_50step_avg": 1.011388195257363,
+      "recent_5step_avg": 1.0212022083460572,
+      "steps": 1460
     },
     "65536": {
-      "minimum": 0.7596978716302136,
-      "recent_50step_avg": 1.00284732509961,
-      "recent_5step_avg": 1.0204615971515767,
-      "steps": 2587
+      "minimum": 0.7260590189471007,
+      "recent_50step_avg": 1.0079377384282808,
+      "recent_5step_avg": 1.0320630404374365,
+      "steps": 3213
     },
     "8192": {
-      "minimum": 0.93855708189246,
-      "recent_50step_avg": 1.0139995509789,
-      "recent_5step_avg": 1.012076663996813,
-      "steps": 2352
+      "minimum": 0.9166619652876661,
+      "recent_50step_avg": 1.0103174516777698,
+      "recent_5step_avg": 1.001678948522681,
+      "steps": 2920
     }
   },
   "contexts_trained": [
@@ -48,51 +48,15 @@
   ],
   "controlled_reuse_tokens": 0,
   "corpus_tokens": 114200000000,
-  "corpus_unique_coverage_fraction": 0.0775758010507881,
+  "corpus_unique_coverage_fraction": 0.09714707726795097,
   "coverage_cycle": 0,
   "development": {
-    "best_mlm": 1.2207758518742697,
-    "best_step": 11000,
-    "evaluations": 22,
-    "latest_mlm": 1.2207758518742697,
-    "latest_step": 11000,
+    "best_mlm": 1.2203703538867123,
+    "best_step": 11500,
+    "evaluations": 28,
+    "latest_mlm": 1.2210154771658714,
+    "latest_step": 14000,
     "recent": [
-      {
-        "frame": 0.2889308230895957,
-        "mlm": 1.2388856463178735,
-        "region": 0.2800922579916994,
-        "step": 7500
-      },
-      {
-        "frame": 0.3047421384924281,
-        "mlm": 1.2730839619611805,
-        "region": 0.2764425242661735,
-        "step": 8000
-      },
-      {
-        "frame": 0.2933857475090293,
-        "mlm": 1.2803956417019782,
-        "region": 0.2700122296168103,
-        "step": 8500
-      },
-      {
-        "frame": 0.280479244550754,
-        "mlm": 1.2339559493548555,
-        "region": 0.2549811370350716,
-        "step": 9000
-      },
-      {
-        "frame": 0.3003371498186225,
-        "mlm": 1.227770904092379,
-        "region": 0.2792926672791788,
-        "step": 9500
-      },
-      {
-        "frame": 0.28776005571022367,
-        "mlm": 1.234902017133491,
-        "region": 0.2723101402111583,
-        "step": 10000
-      },
       {
         "frame": 0.2632616531590578,
         "mlm": 1.2330933830781876,
@@ -104,22 +68,58 @@
         "mlm": 1.2207758518742697,
         "region": 0.23864979684133825,
         "step": 11000
+      },
+      {
+        "frame": 0.25966767173441263,
+        "mlm": 1.2203703538867123,
+        "region": 0.23887557509643106,
+        "step": 11500
+      },
+      {
+        "frame": 0.26108895319826386,
+        "mlm": 1.2207851769150986,
+        "region": 0.24348112663952604,
+        "step": 12000
+      },
+      {
+        "frame": 0.2601528590720441,
+        "mlm": 1.220591187808159,
+        "region": 0.24190131310591179,
+        "step": 12500
+      },
+      {
+        "frame": 0.2582543106862248,
+        "mlm": 1.2214257789623406,
+        "region": 0.24037654027333355,
+        "step": 13000
+      },
+      {
+        "frame": 0.25777265040869346,
+        "mlm": 1.2207320524400735,
+        "region": 0.23965528742198391,
+        "step": 13500
+      },
+      {
+        "frame": 0.2578172491554857,
+        "mlm": 1.2210154771658714,
+        "region": 0.2387808549692688,
+        "step": 14000
       }
     ]
   },
   "distributed_mode": "fsdp_full_shard",
   "figure_files": [
-    "brassicaceae_genomefm_v1_training_curves_step11265.png",
-    "brassicaceae_genomefm_v1_training_curves_step11265.pdf"
+    "brassicaceae_genomefm_v1_training_curves_step14107.png",
+    "brassicaceae_genomefm_v1_training_curves_step14107.pdf"
   ],
   "gradient_accumulation": 4,
-  "gradient_norm_recent_50step_avg": 2.885859375,
-  "last_step": 11265,
-  "latest_checkpoint": null,
+  "gradient_norm_recent_50step_avg": 3.89265625,
+  "last_step": 14107,
+  "latest_checkpoint": "step_000000014000",
   "learning_rate": 2e-05,
   "learning_rate_strategy": "constant_lr_from_legacy_wsd_v1",
-  "mlm_loss_min": 0.7596978716302136,
-  "mlm_loss_recent_50step_avg": 1.0090603428015887,
+  "mlm_loss_min": 0.7260590189471007,
+  "mlm_loss_recent_50step_avg": 1.0141221855294988,
   "parent_checkpoint_step": 11000,
   "parent_run_id": "brassicaceae_330m_formal_v1",
   "per_rank_microbatch": {
@@ -129,12 +129,12 @@
     "65536": 1,
     "8192": 8
   },
-  "processed_forward_tokens": 9855029248,
+  "processed_forward_tokens": 12338954240,
   "schema": "brassi_training_summary_v1",
-  "snapshot_step": 11265,
+  "snapshot_step": 14107,
   "tokens_per_step": 786432,
-  "total_optimizer_steps": 11265,
-  "total_unique_tokens_covered": 8859156480,
+  "total_optimizer_steps": 14107,
+  "total_unique_tokens_covered": 11094196224,
   "transition_steps": [
     11000
   ],
