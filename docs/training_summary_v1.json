@@ -5,38 +5,38 @@
   ],
   "active_run_id": "brassicaceae_330m_constant2e5_from_step11000_v1",
   "automatic_restart": false,
-  "checkpoint_count": 8,
+  "checkpoint_count": 11,
   "checkpoint_group_size": 6,
   "contexts": {
     "16384": {
-      "minimum": 0.9035396218978845,
-      "recent_50step_avg": 1.0008549810819778,
-      "recent_5step_avg": 0.9875470005466843,
-      "steps": 3352
+      "minimum": 0.8820833227386764,
+      "recent_50step_avg": 1.01409885379095,
+      "recent_5step_avg": 1.0093555720479048,
+      "steps": 3620
     },
     "32768": {
       "minimum": 0.7979036193413022,
-      "recent_50step_avg": 1.0075411805378942,
-      "recent_5step_avg": 0.9863962492582231,
-      "steps": 4309
+      "recent_50step_avg": 1.0052646885066971,
+      "recent_5step_avg": 0.9846879371185148,
+      "steps": 4653
     },
     "4096": {
       "minimum": 0.9307979289664766,
-      "recent_50step_avg": 1.0076401475871166,
-      "recent_5step_avg": 0.9959315727639793,
-      "steps": 1595
+      "recent_50step_avg": 1.008282169834928,
+      "recent_5step_avg": 1.002232163685023,
+      "steps": 1723
     },
     "65536": {
       "minimum": 0.7260590189471007,
-      "recent_50step_avg": 1.0083313265619702,
-      "recent_5step_avg": 1.008697943158698,
-      "steps": 3511
+      "recent_50step_avg": 1.0087424510957104,
+      "recent_5step_avg": 0.9946658825025433,
+      "steps": 3792
     },
     "8192": {
       "minimum": 0.9166619652876661,
-      "recent_50step_avg": 1.012014393900868,
-      "recent_5step_avg": 0.9922462473725251,
-      "steps": 3192
+      "recent_50step_avg": 1.0136315358438432,
+      "recent_5step_avg": 1.019557140692806,
+      "steps": 3448
     }
   },
   "contexts_trained": [
@@ -48,33 +48,15 @@
   ],
   "controlled_reuse_tokens": 0,
   "corpus_tokens": 114200000000,
-  "corpus_unique_coverage_fraction": 0.10649886935201401,
+  "corpus_unique_coverage_fraction": 0.11529285940455342,
   "coverage_cycle": 0,
   "development": {
     "best_mlm": 1.2203703538867123,
     "best_step": 11500,
-    "evaluations": 30,
-    "latest_mlm": 1.2210027612011047,
-    "latest_step": 15000,
+    "evaluations": 33,
+    "latest_mlm": 1.2204274344396646,
+    "latest_step": 16500,
     "recent": [
-      {
-        "frame": 0.25966767173441263,
-        "mlm": 1.2203703538867123,
-        "region": 0.23887557509643106,
-        "step": 11500
-      },
-      {
-        "frame": 0.26108895319826386,
-        "mlm": 1.2207851769150986,
-        "region": 0.24348112663952604,
-        "step": 12000
-      },
-      {
-        "frame": 0.2601528590720441,
-        "mlm": 1.220591187808159,
-        "region": 0.24190131310591179,
-        "step": 12500
-      },
       {
         "frame": 0.2582543106862248,
         "mlm": 1.2214257789623406,
@@ -104,22 +86,40 @@
         "mlm": 1.2210027612011047,
         "region": 0.2370165823802433,
         "step": 15000
+      },
+      {
+        "frame": 0.25920135726222915,
+        "mlm": 1.2215429071266908,
+        "region": 0.23615833108921555,
+        "step": 15500
+      },
+      {
+        "frame": 0.25854925335231593,
+        "mlm": 1.2206060231003868,
+        "region": 0.23676413460053383,
+        "step": 16000
+      },
+      {
+        "frame": 0.26067158441975036,
+        "mlm": 1.2204274344396646,
+        "region": 0.24202021215823408,
+        "step": 16500
       }
     ]
   },
   "distributed_mode": "fsdp_full_shard",
   "figure_files": [
-    "brassicaceae_genomefm_v1_training_curves_step15465.png",
-    "brassicaceae_genomefm_v1_training_curves_step15465.pdf"
+    "brassicaceae_genomefm_v1_training_curves_step16742.png",
+    "brassicaceae_genomefm_v1_training_curves_step16742.pdf"
   ],
   "gradient_accumulation": 4,
-  "gradient_norm_recent_50step_avg": 3.0740625,
-  "last_step": 15465,
-  "latest_checkpoint": "step_000000015000",
+  "gradient_norm_recent_50step_avg": 3.54515625,
+  "last_step": 16742,
+  "latest_checkpoint": "step_000000016500",
   "learning_rate": 2e-05,
   "learning_rate_strategy": "constant_lr_from_legacy_wsd_v1",
   "mlm_loss_min": 0.7260590189471007,
-  "mlm_loss_recent_50step_avg": 0.996774013102122,
+  "mlm_loss_recent_50step_avg": 1.0120716619907673,
   "parent_checkpoint_step": 11000,
   "parent_run_id": "brassicaceae_330m_formal_v1",
   "per_rank_microbatch": {
@@ -129,12 +129,12 @@
     "65536": 1,
     "8192": 8
   },
-  "processed_forward_tokens": 13526085632,
+  "processed_forward_tokens": 14643163136,
   "schema": "brassi_training_summary_v1",
-  "snapshot_step": 15465,
+  "snapshot_step": 16742,
   "tokens_per_step": 786432,
-  "total_optimizer_steps": 15465,
-  "total_unique_tokens_covered": 12162170880,
+  "total_optimizer_steps": 16742,
+  "total_unique_tokens_covered": 13166444544,
   "transition_steps": [
     11000
   ],
