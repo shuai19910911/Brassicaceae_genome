@@ -3,40 +3,43 @@
     "brassicaceae_330m_low_lr_from_step41500_v1",
     "brassicaceae_330m_constant2e5_from_step56500_v1"
   ],
-  "active_run_id": "brassicaceae_330m_constant2e5_from_step11000_v1",
+  "active_run_id": "brassicaceae_330m_constant4e5_from_step18000_trial_v1",
   "automatic_restart": false,
-  "checkpoint_count": 23,
+  "automatic_restore_2e5": false,
+  "automatic_stop": false,
+  "baseline_preserved_step": 23000,
+  "checkpoint_count": 5,
   "checkpoint_group_size": 6,
   "contexts": {
     "16384": {
-      "minimum": 0.8641738498440467,
-      "recent_50step_avg": 1.0032569130787707,
-      "recent_5step_avg": 0.990199068305872,
-      "steps": 4865
+      "minimum": 0.8657356347047057,
+      "recent_50step_avg": 1.0161655619094903,
+      "recent_5step_avg": 1.0465533727030782,
+      "steps": 4345
     },
     "32768": {
       "minimum": 0.7979036193413022,
-      "recent_50step_avg": 0.9945190832408586,
-      "recent_5step_avg": 1.0043528526619192,
-      "steps": 6254
+      "recent_50step_avg": 1.0197495959965241,
+      "recent_5step_avg": 1.0271591667726347,
+      "steps": 5586
     },
     "4096": {
-      "minimum": 0.9273029538629886,
-      "recent_50step_avg": 1.0037282579651874,
-      "recent_5step_avg": 0.9988318626577769,
-      "steps": 2316
+      "minimum": 0.9307979289664766,
+      "recent_50step_avg": 1.0071122378868078,
+      "recent_5step_avg": 1.0044378854293905,
+      "steps": 2069
     },
     "65536": {
       "minimum": 0.7260590189471007,
-      "recent_50step_avg": 0.9988751549783825,
-      "recent_5step_avg": 1.0242714956341132,
-      "steps": 5097
+      "recent_50step_avg": 1.0118565827399117,
+      "recent_5step_avg": 1.0059937028441845,
+      "steps": 4551
     },
     "8192": {
-      "minimum": 0.8616698689017155,
-      "recent_50step_avg": 1.005482458984689,
-      "recent_5step_avg": 1.007158743452502,
-      "steps": 4633
+      "minimum": 0.8647572181397477,
+      "recent_50step_avg": 1.004170156281784,
+      "recent_5step_avg": 0.9967663517934635,
+      "steps": 4138
     }
   },
   "contexts_trained": [
@@ -48,80 +51,202 @@
   ],
   "controlled_reuse_tokens": 0,
   "corpus_tokens": 114200000000,
-  "corpus_unique_coverage_fraction": 0.15612259082311733,
+  "corpus_unique_coverage_fraction": 0.14247365716287216,
   "coverage_cycle": 0,
   "development": {
+    "active_branch": {
+      "best_step": 19000,
+      "evaluations": 5,
+      "first_mlm": 1.2229839085117418,
+      "max_mlm": 1.2252199402717006,
+      "mean_mlm": 1.2230194849553888,
+      "min_mlm": 1.2211409413515686,
+      "points": [
+        {
+          "mlm": 1.2229839085117418,
+          "step": 18500
+        },
+        {
+          "mlm": 1.2211409413515686,
+          "step": 19000
+        },
+        {
+          "mlm": 1.2218644797467884,
+          "step": 19500
+        },
+        {
+          "mlm": 1.2252199402717006,
+          "step": 20000
+        },
+        {
+          "mlm": 1.2238881548951448,
+          "step": 20500
+        }
+      ]
+    },
     "best_mlm": 1.2191562618284963,
+    "best_origin": "parent_checkpoint",
     "best_step": 18000,
-    "evaluations": 45,
-    "latest_mlm": 1.2200535850755265,
-    "latest_step": 22500,
+    "evaluations": 41,
+    "latest_mlm": 1.2238881548951448,
+    "latest_step": 20500,
     "recent": [
       {
-        "frame": 0.2590035789140714,
-        "mlm": 1.2197218396836156,
-        "region": 0.23859794287004182,
+        "frame": 0.25907661071553034,
+        "mlm": 1.2204092082234992,
+        "region": 0.24187928444984794,
+        "step": 17000
+      },
+      {
+        "frame": 0.25757368090427385,
+        "mlm": 1.2201101004744892,
+        "region": 0.2396563702913129,
+        "step": 17500
+      },
+      {
+        "frame": 0.25975686922799707,
+        "mlm": 1.2191562618284963,
+        "region": 0.2420149989158931,
+        "step": 18000
+      },
+      {
+        "frame": 0.25753033519199087,
+        "mlm": 1.2229839085117418,
+        "region": 0.23704470604367317,
+        "step": 18500
+      },
+      {
+        "frame": 0.2637382703594285,
+        "mlm": 1.2211409413515686,
+        "region": 0.241891366177647,
         "step": 19000
       },
       {
-        "frame": 0.25865245079936794,
-        "mlm": 1.2207194777638044,
-        "region": 0.24249933542762325,
+        "frame": 0.2582933249211919,
+        "mlm": 1.2218644797467884,
+        "region": 0.2423372762977601,
         "step": 19500
       },
       {
-        "frame": 0.2560191446347104,
-        "mlm": 1.2203282499144852,
-        "region": 0.2367320971379578,
+        "frame": 0.2551156912839786,
+        "mlm": 1.2252199402717006,
+        "region": 0.2324662726424883,
         "step": 20000
       },
       {
-        "frame": 0.2592374013413224,
-        "mlm": 1.2202355646601863,
-        "region": 0.24216188240558864,
+        "frame": 0.2565049043461301,
+        "mlm": 1.2238881548951448,
+        "region": 0.23888255186882207,
         "step": 20500
-      },
-      {
-        "frame": 0.2592530410683453,
-        "mlm": 1.2198679319899342,
-        "region": 0.24132870727430775,
-        "step": 21000
-      },
-      {
-        "frame": 0.2579115980131637,
-        "mlm": 1.2203522689590443,
-        "region": 0.23959576054801357,
-        "step": 21500
-      },
-      {
-        "frame": 0.2588545142161561,
-        "mlm": 1.2196805834423727,
-        "region": 0.24224297384876758,
-        "step": 22000
-      },
-      {
-        "frame": 0.25648369557684386,
-        "mlm": 1.2200535850755265,
-        "region": 0.2370808738792612,
-        "step": 22500
       }
     ]
   },
   "distributed_mode": "fsdp_full_shard",
+  "end_step": null,
   "figure_files": [
-    "brassicaceae_genomefm_v1_training_curves_step22671.png",
-    "brassicaceae_genomefm_v1_training_curves_step22671.pdf"
+    "brassicaceae_genomefm_v1_training_curves_step20689.png",
+    "brassicaceae_genomefm_v1_training_curves_step20689.pdf",
+    "brassicaceae_genomefm_v1_lr_comparison_step20500.png",
+    "brassicaceae_genomefm_v1_lr_comparison_step20500.pdf"
   ],
+  "fixed_lr_comparison": {
+    "baseline_mean_dev_mlm": 1.2203055589818017,
+    "data_order_steps_checked": 2500,
+    "downstream_claim": false,
+    "mean_delta_trial_minus_baseline": 0.00271392597358715,
+    "numerical_paired_improvement": false,
+    "paired_count": 5,
+    "pairs": [
+      {
+        "baseline_dev_mlm": 1.2205226628869168,
+        "delta_trial_minus_baseline": 0.0024612456248249703,
+        "optimizer_step": 18500,
+        "relative_change": 0.0020165505317233166,
+        "trial_dev_mlm": 1.2229839085117418
+      },
+      {
+        "baseline_dev_mlm": 1.2197218396836156,
+        "delta_trial_minus_baseline": 0.0014191016679530044,
+        "optimizer_step": 19000,
+        "relative_change": 0.0011634633584335146,
+        "trial_dev_mlm": 1.2211409413515686
+      },
+      {
+        "baseline_dev_mlm": 1.2207194777638044,
+        "delta_trial_minus_baseline": 0.0011450019829839508,
+        "optimizer_step": 19500,
+        "relative_change": 0.0009379730592006626,
+        "trial_dev_mlm": 1.2218644797467884
+      },
+      {
+        "baseline_dev_mlm": 1.2203282499144852,
+        "delta_trial_minus_baseline": 0.0048916903572153725,
+        "optimizer_step": 20000,
+        "relative_change": 0.004008503742790646,
+        "trial_dev_mlm": 1.2252199402717006
+      },
+      {
+        "baseline_dev_mlm": 1.2202355646601863,
+        "delta_trial_minus_baseline": 0.0036525902349584527,
+        "optimizer_step": 20500,
+        "relative_change": 0.0029933484490559273,
+        "trial_dev_mlm": 1.2238881548951448
+      }
+    ],
+    "recovery_evidence": {
+      "baseline_reference_sha256": "a5ef05d0af66edf914537011cafdeb82225f9e1d4bcb7d38ef637c0e6f4e4dbc",
+      "only_learning_rate_changed": true,
+      "parent_checkpoint_sha256": "2c053247b1b0698ae975b26fbf2a2701d60981d8e8369309c7409adb87fc5bc4",
+      "parent_checkpoint_step": 18000
+    },
+    "relative_mean_change": 0.0022239724744445113,
+    "resume_policy": "keep_constant_4e-5_by_user_instruction",
+    "same_data_fields_checked": [
+      "context_length",
+      "coverage_cycle",
+      "pool_state",
+      "valid_counts",
+      "ledger"
+    ],
+    "schema": "brassi_lr_paired_v1",
+    "state": "PAIRED_NUMERICAL_COMPARISON",
+    "statistical_significance_claim": false,
+    "steps": [
+      18500,
+      19000,
+      19500,
+      20000,
+      20500
+    ],
+    "trial_mean_dev_mlm": 1.2230194849553888
+  },
   "gradient_accumulation": 4,
-  "gradient_norm_recent_50step_avg": 3.14359375,
-  "last_step": 22671,
-  "latest_checkpoint": "step_000000022500",
-  "learning_rate": 2e-05,
-  "learning_rate_strategy": "constant_lr_from_legacy_wsd_v1",
+  "gradient_norm_recent_50step_avg": 12.40625,
+  "last_step": 20689,
+  "latest_checkpoint": "step_000000020500",
+  "learning_rate": 4e-05,
+  "learning_rate_strategy": "constant_4e5_from_constant_2e5_v1",
+  "lineage": [
+    {
+      "end_step": 11000,
+      "run_id": "brassicaceae_330m_formal_v1",
+      "start_step": 1
+    },
+    {
+      "end_step": 18000,
+      "run_id": "brassicaceae_330m_constant2e5_from_step11000_v1",
+      "start_step": 11001
+    },
+    {
+      "end_step": 20689,
+      "run_id": "brassicaceae_330m_constant4e5_from_step18000_trial_v1",
+      "start_step": 18001
+    }
+  ],
   "mlm_loss_min": 0.7260590189471007,
-  "mlm_loss_recent_50step_avg": 1.0014638638919258,
-  "parent_checkpoint_step": 11000,
-  "parent_run_id": "brassicaceae_330m_formal_v1",
+  "mlm_loss_recent_50step_avg": 1.0175230955077414,
+  "parent_checkpoint_step": 18000,
+  "parent_run_id": "brassicaceae_330m_constant2e5_from_step11000_v1",
   "per_rank_microbatch": {
     "16384": 4,
     "32768": 2,
@@ -129,14 +254,17 @@
     "65536": 1,
     "8192": 8
   },
-  "processed_forward_tokens": 19825037312,
+  "processed_forward_tokens": 18091577344,
+  "replayed_parent_rows_omitted": 494,
   "schema": "brassi_training_summary_v1",
-  "snapshot_step": 22671,
+  "snapshot_created_at": "2026-09-09T09:25:59.603500+08:00",
+  "snapshot_step": 20689,
   "tokens_per_step": 786432,
-  "total_optimizer_steps": 22671,
-  "total_unique_tokens_covered": 17829199872,
+  "total_optimizer_steps": 20689,
+  "total_unique_tokens_covered": 16270491648,
   "transition_steps": [
-    11000
+    11000,
+    18000
   ],
   "world_size": 3
 }
