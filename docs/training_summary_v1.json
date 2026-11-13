@@ -265,7 +265,7 @@
   "processed_forward_tokens": 18800877568,
   "replayed_parent_rows_omitted": 494,
   "schema": "brassi_training_summary_v1",
-  "snapshot_created_at": "2026-11-13T15:05:51.587084+08:00",
+  "snapshot_created_at": "2026-11-13T17:08:53.791990+08:00",
   "snapshot_step": 21500,
   "tokens_per_step": 786432,
   "total_optimizer_steps": 21500,
